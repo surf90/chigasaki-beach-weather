@@ -1,272 +1,678 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>茅ヶ崎ヘッドランド 気象情報 | STUDIO Style</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <style>
-    /* Base Styles */
-    body {
-      font-family: Inter, "Noto Sans JP", sans-serif;
-      background-color: #ffffff;
-      color: #222222;
-      margin: 0;
-      padding: 0;
-      line-height: 1.7;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 80px 32px; /* XXL Spacing */
-    }
-
-    /* Typography */
-    h1 {
-      font-size: 35.04px;
-      font-weight: 600;
-      line-height: 1.2;
-      letter-spacing: normal;
-      text-align: center;
-      margin-bottom: 48px; /* XL */
-    }
-
-    h2 {
-      font-size: 18.72px; /* H3 Feature style */
-      font-weight: 700;
-      margin-top: 0;
-      margin-bottom: 16px;
-      color: #222222;
-    }
-
-    .mono-label {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: -0.44px;
-      color: #0275fd;
-      text-transform: uppercase;
-      display: block;
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    /* Cards & Surfaces */
-    .weather-box {
-      background-color: #f7f7f7; /* Surface Light */
-      padding: 32px;
-      border-radius: 12px;
-      margin-bottom: 24px;
-    }
-
-    .data-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-      font-size: 15.04px;
-    }
-    .data-row:last-child { border-bottom: none; }
-
-    .data-label {
-      color: #707070; /* Text Secondary */
-      font-weight: 500;
-      font-size: 14px;
-      letter-spacing: -0.28px;
-    }
-
-    .data-value {
-      font-weight: 600;
-      color: #222222;
-    }
-
-    /* Buttons */
-    .toggle-btn {
-      background-color: transparent;
-      border: 1px solid #222222;
-      color: #222222;
-      border-radius: 4px; /* Secondary button radius */
-      padding: 8px 16px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 16px;
-    }
-    .toggle-btn:hover {
-      background-color: #222222;
-      color: #f7f7f7;
-    }
-
-    .cta-pill {
-      display: inline-block;
-      background-color: #222222;
-      color: #f7f7f7;
-      padding: 10px 24px;
-      border-radius: 500px;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: -0.26px;
-      text-decoration: none;
-      text-align: center;
-    }
-
-    /* Status Badges */
-    .warning-badge {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: 10px;
-      font-weight: 500;
-      padding: 4px 12px;
-      border-radius: 500px;
-      color: #fff;
-      margin-right: 8px;
-    }
-    .badge-tokubetsu { background-color: #8b00ff; }
-    .badge-keiho { background-color: #ff4b4b; }
-    .badge-chuiho { background-color: #f5a623; }
-
-    /* Utilities */
-    .current-time {
-      text-align: center;
-      font-size: 14px;
-      color: #707070;
-      margin-bottom: 48px;
-      letter-spacing: -0.28px;
-    }
-
-    .loading { text-align: center; color: #707070; padding: 40px; }
-
-    #tide-chart-container {
-      margin-top: 24px;
-      background: #ffffff;
-      padding: 16px;
-      border-radius: 8px;
-    }
-
-    .footer {
-      margin-top: 80px;
-      text-align: center;
-      font-size: 12px;
-      color: #707070;
-    }
-    .footer a { color: #0275fd; text-decoration: none; }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茅ヶ崎ヘッドランド 気象情報</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 1.5rem;
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .weather-box {
+            background: #e9f2ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .weather-box h2 {
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #004494;
+        }
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            text-align: center;
+            color: #777;
+        }
+        .footer a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+        .error {
+            color: #d9534f;
+            text-align: center;
+        }
+        .current-time {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .jma-overview {
+            font-size: 0.9rem;
+            color: #444;
+            line-height: 1.6;
+            margin-top: 8px;
+            white-space: pre-wrap;
+            display: none;
+        }
+        .toggle-btn {
+            background: none;
+            border: 1px solid #0056b3;
+            color: #0056b3;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .toggle-btn:hover {
+            background: #e9f2ff;
+        }
+        .warning-none {
+            font-size: 0.9rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .warning-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .warning-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #fff;
+        }
+        .badge-tokubetsu { background-color: #8b00ff; }
+        .badge-keiho     { background-color: #d9534f; }
+        .badge-chuiho    { background-color: #e8a000; color: #fff; }
+        .warning-name {
+            font-size: 0.95rem;
+            color: #333;
+        }
+        .warning-detail-link {
+            display: block;
+            font-size: 0.8rem;
+            color: #0056b3;
+            text-align: right;
+            margin-top: 8px;
+        }
+    </style>
+    <!-- Chart.jsのライブラリを読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <div class="container">
-  <span class="mono-label">Condition Report</span>
-  <h1>茅ヶ崎ヘッドランド</h1>
-  <div id="current-time" class="current-time">--:--</div>
+    <h1>🏖 茅ヶ崎ヘッドランド コンディション(試作版)</h1>
+    
+    <div id="current-time" class="current-time"></div>
+    
+    <div id="loading" class="loading">最新のデータを取得中...</div>
+    <div id="error" class="error" style="display: none;">データの取得に失敗しました。</div>
 
-  <div id="loading" class="loading">データを読み込んでいます...</div>
-
-  <div id="weather-content" style="display: none;">
-    <div class="weather-box">
-      <h2>現在の天気</h2>
-      <div class="data-row">
-        <span class="data-label">気温</span>
-        <span class="data-value" id="temp">-- ℃</span>
-      </div>
-      <div class="data-row">
-        <span class="data-label">風速 / 風向</span>
-        <span class="data-value"><span id="wind">--</span> m/s (<span id="wind-dir">--</span>)</span>
-      </div>
-    </div>
-
-    <div class="weather-box">
-      <h2>海面コンディション</h2>
-      <div class="data-row">
-        <span class="data-label">波高</span>
-        <span class="data-value" id="wave-height">-- m</span>
-      </div>
-      <div class="data-row">
-        <span class="data-label">海水温</span>
-        <span class="data-value" id="sea-temp">-- ℃</span>
-      </div>
-      
-      <div id="tide-list"></div>
-      
-      <div id="tide-chart-container" style="display:none; height:200px;">
-        <canvas id="tideChart"></canvas>
-      </div>
-    </div>
-
-    <div class="weather-box">
-      <h2>気象庁 予報</h2>
-      <div id="jma-forecast-content">
-        <div class="data-row">
-          <span class="data-label">今日の天気</span>
-          <span class="data-value" id="jma-weather">--</span>
+    <div id="weather-content" style="display: none;">
+        <div class="weather-box">
+            <h2>現在の天気 <span style="font-size:0.75rem; font-weight:normal; color:#888;">（Open-Meteo）</span></h2>
+            <div class="data-row"><span>気温:</span> <span id="temp">-- ℃</span></div>
+            <div class="data-row"><span>風速:</span> <span id="wind">-- m/s</span></div>
+            <div class="data-row"><span>風向:</span> <span id="wind-dir">-- °</span></div>
         </div>
-        <div class="data-row">
-          <span class="data-label">降水確率</span>
-          <span class="data-value" id="jma-pop">--</span>
+
+        <div class="weather-box">
+            <h2>海面コンディション (予測) <span style="font-size:0.75rem; font-weight:normal; color:#888;">（Open-Meteo）</span></h2>
+            <div class="data-row"><span>波の高さ:</span> <span id="wave-height">-- m</span></div>
+            <div class="data-row"><span>海水温:</span> <span id="sea-temp">-- ℃</span></div>
+            <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">※波と海水温のデータは沖合の予測値ベースです。</p>
         </div>
-        <button id="jma-overview-toggle" class="toggle-btn" onclick="toggleOverview()">概況を表示 ▼</button>
-        <div id="jma-overview-text" style="display:none; font-size:14px; margin-top:16px; color:#444; white-space:pre-wrap;"></div>
-      </div>
-    </div>
 
-    <div class="weather-box" id="jma-warning-section">
-      <h2>警報・注意報</h2>
-      <div id="jma-warning-content"></div>
-    </div>
-  </div>
+        <div class="weather-box">
+            <h2>潮汐情報 <span style="font-size:0.75rem; font-weight:normal; color:#888;">（Stormglass）</span></h2>
+            <div class="data-row"><span>潮回り:</span> <span id="tide-type">--</span></div>
+            <div id="tide-extremes-container">
+                <div class="data-row"><span>満潮・干潮:</span> <span id="tide-status">読み込み中...</span></div>
+            </div>
+            
+            <!-- タイドグラフ表示用コンテナ -->
+            <div id="tide-chart-container" style="display: none; margin-top: 20px; height: 160px;">
+                <canvas id="tideChart"></canvas>
+            </div>
+            
+            <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">※正確な潮位は<a href="https://www.data.jma.go.jp/gmd/kaiyou/db/tide/suisan/suisan.php?stn=EN" target="_blank">気象庁の潮位表（江の島）</a>等をご確認ください。</p>
+        </div>
 
-  <div class="footer">
-    <p>Data provided by Open-Meteo & JMA</p>
-    <a href="#" class="cta-pill">最新の状態に更新</a>
-  </div>
+        <!-- 気象庁 今日の天気予報ブロック -->
+        <div class="weather-box" id="jma-forecast-box">
+            <h2>今日の天気予報 <span style="font-size:0.75rem; font-weight:normal; color:#888;">（気象庁）</span></h2>
+            <div id="jma-loading" style="color:#666; font-size:0.9rem;">取得中...</div>
+            <div id="jma-forecast-content" style="display:none;">
+                <div class="data-row"><span>天気:</span> <span id="jma-weather">--</span></div>
+                <div class="data-row"><span>降水確率:</span> <span id="jma-pop">--</span></div>
+                <button class="toggle-btn" id="jma-overview-toggle" onclick="toggleOverview()">概況を表示 ▼</button>
+                <div class="jma-overview" id="jma-overview-text"></div>
+            </div>
+            <div id="jma-error" style="display:none; color:#d9534f; font-size:0.9rem;">天気予報の取得に失敗しました。</div>
+        </div>
+
+        <!-- 気象庁 注意報・警報ブロック -->
+        <div class="weather-box" id="jma-warning-box">
+            <h2>注意報・警報 <span style="font-size:0.75rem; font-weight:normal; color:#888;">（気象庁）</span></h2>
+            <div id="jma-warning-loading" style="color:#666; font-size:0.9rem;">取得中...</div>
+            <div id="jma-warning-content" style="display:none;">
+                <div id="jma-warning-list"></div>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 8px; margin-bottom: 0;">※必ず<a href="https://www.data.jma.go.jp/multi/warn/warn_detail.html?code=140010&selected_code=1421500&warning=all&lang=jp" target="_blank">気象庁HP</a>で最新の情報を確認してください。</p>
+            </div>
+            <div id="jma-warning-error" style="display:none; color:#d9534f; font-size:0.9rem;">注意報情報の取得に失敗しました。</div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        データ提供元: 
+        <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a> / 
+        <a href="https://stormglass.io/" target="_blank">Stormglass</a> / 
+        <a href="https://www.jma.go.jp/bosai/forecast/" target="_blank">気象庁JSON</a><br>
+        ※本アプリは参考用です。実際の活動時は必ず目視や公式発表も併せて確認してください。<br>
+        <br>
+        &copy; 2026 N., ISHIKAWA
+    </div>
 </div>
 
 <script>
-  // --- 基本設定とAPI連携 (既存ロジックを継承し、デザイン部分のみ調整) ---
-  let tideChartInstance = null;
+    // 茅ヶ崎ヘッドランド付近の緯度経度
+    const LAT = 35.318;
+    const LON = 139.410;
 
-  // Chart.jsのカラー設定をブランドカラー (#0275fd) に変更
-  function drawTideChart(extremes, hasHeightData) {
-    const chartContainer = document.getElementById('tide-chart-container');
-    chartContainer.style.display = 'block';
-    const ctx = document.getElementById('tideChart').getContext('2d');
+    // データ取得時点の日付と時刻を表示する関数
+    function displayFetchTime() {
+        const now = new Date();
+        const options = { 
+            year: 'numeric', month: 'short', day: 'numeric', weekday: 'short', 
+            hour: '2-digit', minute: '2-digit', second: '2-digit' 
+        };
+        document.getElementById('current-time').textContent = "データ取得日時: " + now.toLocaleString('ja-JP', options);
+    }
 
-    // ... (補間ロジックは既存のものを利用) ...
-    // ※以下、カラー指定部分を修正
-    tideChartInstance = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [{
-          borderColor: '#0275fd', // STUDIO Blue
-          backgroundColor: 'rgba(2, 117, 253, 0.05)',
-          borderWidth: 2,
-          pointBackgroundColor: pointColors,
-          fill: true,
-          tension: 0.4
-          // ...
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { 
-          x: { display: false },
-          y: { display: false } 
+    // 天気と風のデータを取得 (Open-Meteo API)
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current_weather=true&windspeed_unit=ms`;
+    
+    // 海洋データ（波、海水温）を取得 (Open-Meteo Marine API)
+    const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${LAT}&longitude=${LON}&current=wave_height,sea_surface_temperature`;
+
+    // 風向の角度を16方位の日本語に変換する関数
+    function getWindDirection16(degree) {
+        const directions = ["北", "北北東", "北東", "東北東", "東", "東南東", "南東", "南南東", "南", "南南西", "南西", "西南西", "西", "西北西", "北西", "北北西"];
+        // 角度を22.5度で割って四捨五入し、16方位のインデックスに変換
+        const index = Math.round(degree / 22.5) % 16;
+        return directions[index];
+    }
+
+    // 簡易的な月齢計算と潮回り判定
+    function calculateTide() {
+        const now = new Date();
+        // 2000年1月6日からの経過日数で月齢を概算
+        const epoch = new Date(Date.UTC(2000, 0, 6, 18, 14, 0)).getTime();
+        const diffDays = (now.getTime() - epoch) / (1000 * 60 * 60 * 24);
+        let age = diffDays % 29.530588853;
+        if (age < 0) age += 29.530588853;
+
+        const MathRoundAge = Math.round(age) % 30;
+        let tideType = "若潮"; // デフォルト
+        
+        if (MathRoundAge <= 2 || MathRoundAge >= 28 || (MathRoundAge >= 13 && MathRoundAge <= 17)) {
+            tideType = "大潮";
+        } else if ((MathRoundAge >= 3 && MathRoundAge <= 6) || (MathRoundAge >= 10 && MathRoundAge <= 12) || (MathRoundAge >= 18 && MathRoundAge <= 21) || (MathRoundAge >= 25 && MathRoundAge <= 27)) {
+            tideType = "中潮";
+        } else if (MathRoundAge === 7 || MathRoundAge === 8 || MathRoundAge === 22 || MathRoundAge === 23) {
+            tideType = "小潮";
+        } else if (MathRoundAge === 9 || MathRoundAge === 24) {
+            tideType = "長潮";
         }
-      }
-    });
-  }
 
-  // ※その他の fetchWeatherData, fetchJmaForecast 等の関数は、
-  // ID名をHTMLと整合させてそのまま移植してください。
+        document.getElementById('tide-type').textContent = `${tideType} (月齢: ${age.toFixed(1)})`;
+    }
+
+    // プレビュー用のダミー潮汐データを生成する関数
+    function getDummyTideExtremes() {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0); // 今日の0時基準
+        return [
+            { time: new Date(now.getTime() + 5 * 3600000).toISOString(), type: 'high', height: 1.4 },
+            { time: new Date(now.getTime() + 11 * 3600000).toISOString(), type: 'low', height: 0.3 },
+            { time: new Date(now.getTime() + 17 * 3600000).toISOString(), type: 'high', height: 1.5 },
+            { time: new Date(now.getTime() + 23 * 3600000).toISOString(), type: 'low', height: 0.4 }
+        ];
+    }
+
+    // GitHub Actionsで自動生成されたJSONから満潮・干潮時間を取得する関数
+    async function fetchTideExtremes() {
+        const tideStatusEl = document.getElementById('tide-status');
+        
+        try {
+            // プレビュー環境（blob:やfile:など）では相対URLのfetchがエラーになるためスキップする
+            if (!window.location.protocol.startsWith('http')) {
+                throw new Error("プレビュー環境またはローカル環境のため、tide_data.jsonの読み込みをスキップします。");
+            }
+
+            // キャッシュ（古いデータ）を読み込まないよう、URLの末尾に現在の時間を付与して回避
+            const response = await fetch(`tide_data.json?t=${new Date().getTime()}`);
+
+            if (!response.ok) {
+                // 初回実行時などでJSONファイルがまだ存在しない場合
+                throw new Error("潮汐データの読み込みに失敗しました");
+            }
+
+            const data = await response.json();
+            
+            // データを表示
+            displayTideData(data.data);
+
+        } catch (error) {
+            console.warn(error.message); // エラーで画面を止めないよう警告レベルに変更
+            
+            // プレビュー環境でもグラフを確認できるようにダミーデータで描画
+            const dummyData = getDummyTideExtremes();
+            displayTideData(dummyData);
+            
+            // ダミーデータであることを明記
+            const container = document.getElementById('tide-extremes-container');
+            const note = document.createElement('div');
+            note.style.fontSize = '0.8rem';
+            note.style.color = '#d9534f';
+            note.style.textAlign = 'right';
+            note.style.marginTop = '5px';
+            note.textContent = '※プレビュー環境のためダミー波形を表示しています';
+            container.appendChild(note);
+        }
+    }
+
+    let tideChartInstance = null; // グラフのインスタンス
+
+    // 潮汐データをHTMLに表示し、グラフを描画する関数
+    function displayTideData(extremes) {
+        const container = document.getElementById('tide-extremes-container');
+        container.innerHTML = ''; // 中身をクリア
+
+        if (!extremes || extremes.length === 0) {
+            container.innerHTML = '<div class="data-row"><span>満潮・干潮:</span> <span>データなし</span></div>';
+            return;
+        }
+
+        const chartDataPoints = [];
+        let hasHeightData = false;
+
+        extremes.forEach(item => {
+            // Stormglassの時間はUTCなので、日本時間に変換
+            const dateObj = new Date(item.time);
+            const timeStr = dateObj.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+            
+            const typeStr = item.type === 'high' ? '満潮' : '干潮';
+            const color = item.type === 'high' ? '#d9534f' : '#0275d8'; // 満潮は赤系、干潮は青系
+
+            // 高さデータがあれば取得
+            let heightValue = item.type === 'high' ? 1 : 0;
+            let heightText = '';
+            if (item.height !== undefined && item.height !== null) {
+                hasHeightData = true;
+                heightValue = parseFloat(item.height);
+                heightText = ` (${heightValue.toFixed(1)}m)`;
+            }
+
+            const row = document.createElement('div');
+            row.className = 'data-row';
+            row.innerHTML = `<span>${typeStr}:</span> <span style="color: ${color}; font-weight: bold;">${timeStr}${heightText}</span>`;
+            container.appendChild(row);
+
+            // グラフ用にデータを格納
+            chartDataPoints.push({
+                timeMs: dateObj.getTime(),
+                timeStr: timeStr,
+                type: item.type,
+                height: heightValue
+            });
+        });
+
+        // グラフを描画
+        drawTideChart(chartDataPoints, hasHeightData);
+    }
+
+    // Chart.jsを用いてタイドグラフを描画する関数
+    function drawTideChart(extremes, hasHeightData) {
+        const chartContainer = document.getElementById('tide-chart-container');
+        chartContainer.style.display = 'block';
+
+        const ctx = document.getElementById('tideChart').getContext('2d');
+        
+        // 時間順にソート
+        extremes.sort((a, b) => a.timeMs - b.timeMs);
+
+        const labels = [];
+        const dataPoints = [];
+        const pointRadii = [];
+        const pointColors = [];
+
+        // コサイン曲線を用いて、極値（満潮・干潮）の間を滑らかに補間する
+        if (extremes.length >= 2) {
+            const step = 30 * 60 * 1000; // 30分刻みで補間
+            for (let i = 0; i < extremes.length - 1; i++) {
+                const pt1 = extremes[i];
+                const pt2 = extremes[i + 1];
+
+                // 実際の極値ポイント
+                labels.push(pt1.timeStr);
+                dataPoints.push(pt1.height);
+                pointRadii.push(5); // 実データは点を大きく
+                pointColors.push(pt1.type === 'high' ? '#d9534f' : '#0275d8');
+
+                // pt1 と pt2 の間をコサイン曲線で埋める
+                for (let t = pt1.timeMs + step; t < pt2.timeMs; t += step) {
+                    const normalizedT = (t - pt1.timeMs) / (pt2.timeMs - pt1.timeMs);
+                    // (1 - cos(π * t)) / 2 で 0〜1 の滑らかなS字曲線を作る
+                    const cosVal = (1 - Math.cos(Math.PI * normalizedT)) / 2;
+                    const h = pt1.height + (pt2.height - pt1.height) * cosVal;
+
+                    const dateObj = new Date(t);
+                    labels.push(dateObj.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }));
+                    dataPoints.push(h);
+                    pointRadii.push(0); // 補間点はマーカーを隠す
+                    pointColors.push('#0056b3');
+                }
+            }
+            // 最後の極値ポイント
+            const lastPt = extremes[extremes.length - 1];
+            labels.push(lastPt.timeStr);
+            dataPoints.push(lastPt.height);
+            pointRadii.push(5);
+            pointColors.push(lastPt.type === 'high' ? '#d9534f' : '#0275d8');
+        }
+
+        // 以前のグラフがあれば破棄して再描画
+        if (tideChartInstance) {
+            tideChartInstance.destroy();
+        }
+
+        tideChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: hasHeightData ? '潮位 (m)' : '潮位イメージ',
+                    data: dataPoints,
+                    borderColor: '#0056b3',
+                    backgroundColor: 'rgba(0, 86, 179, 0.15)',
+                    borderWidth: 2,
+                    pointBackgroundColor: pointColors,
+                    pointBorderColor: '#fff',
+                    pointRadius: pointRadii,
+                    pointHoverRadius: 7,
+                    fill: true,
+                    tension: 0.4 
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return hasHeightData ? context.parsed.y.toFixed(2) + ' m' : '潮位イメージ';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        display: hasHeightData,
+                        suggestedMin: hasHeightData ? Math.min(...dataPoints) - 0.2 : -0.2,
+                        suggestedMax: hasHeightData ? Math.max(...dataPoints) + 0.2 : 1.2,
+                        ticks: {
+                            callback: function(value) { return value.toFixed(1) + ' m'; }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxTicksLimit: 6, // X軸の時刻ラベルが重ならないように間引く
+                            maxRotation: 0
+                        },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    // 気象庁 警報コードを日本語名・種別に変換するマップ
+    const WARNING_CODE_MAP = {
+        '02': { name: '暴風雪警報',   level: 'keiho' },
+        '03': { name: '大雨警報',     level: 'keiho' },
+        '04': { name: '洪水警報',     level: 'keiho' },
+        '05': { name: '暴風警報',     level: 'keiho' },
+        '06': { name: '大雪警報',     level: 'keiho' },
+        '07': { name: '波浪警報',     level: 'keiho' },
+        '08': { name: '高潮警報',     level: 'keiho' },
+        '09': { name: '土砂災害警報', level: 'keiho' },
+        '10': { name: '大雨注意報',   level: 'chuiho' },
+        '12': { name: '大雪注意報',   level: 'chuiho' },
+        '13': { name: '風雪注意報',   level: 'chuiho' },
+        '14': { name: '雷注意報',     level: 'chuiho' },
+        '15': { name: '強風注意報',   level: 'chuiho' },
+        '16': { name: '波浪注意報',   level: 'chuiho' },
+        '17': { name: '融雪注意報',   level: 'chuiho' },
+        '18': { name: '洪水注意報',   level: 'chuiho' },
+        '19': { name: '高潮注意報',   level: 'chuiho' },
+        '20': { name: '濃霧注意報',   level: 'chuiho' },
+        '21': { name: '乾燥注意報',   level: 'chuiho' },
+        '22': { name: 'なだれ注意報', level: 'chuiho' },
+        '23': { name: '低温注意報',   level: 'chuiho' },
+        '24': { name: '霜注意報',     level: 'chuiho' },
+        '25': { name: '着氷注意報',   level: 'chuiho' },
+        '26': { name: '着雪注意報',   level: 'chuiho' },
+        '32': { name: '暴風雪特別警報', level: 'tokubetsu' },
+        '33': { name: '大雨特別警報',   level: 'tokubetsu' },
+        '35': { name: '暴風特別警報',   level: 'tokubetsu' },
+        '36': { name: '大雪特別警報',   level: 'tokubetsu' },
+        '37': { name: '波浪特別警報',   level: 'tokubetsu' },
+        '38': { name: '高潮特別警報',   level: 'tokubetsu' },
+    };
+
+    // 気象庁 注意報・警報を取得して表示する関数（茅ヶ崎市 1421500）
+    async function fetchJmaWarning() {
+        const warningUrl = 'https://www.jma.go.jp/bosai/warning/data/warning/140000.json';
+        try {
+            const res = await fetch(warningUrl);
+            if (!res.ok) throw new Error('JMA warning fetch failed');
+            const data = await res.json();
+
+            // areaTypes[1] が市区町村レベル
+            const cityAreas = data.areaTypes && data.areaTypes[1] ? data.areaTypes[1].areas : [];
+            const chigasakiArea = cityAreas.find(a => a.code === '1421500');
+
+            const listEl = document.getElementById('jma-warning-list');
+            listEl.innerHTML = '';
+
+            // 発表中（status が「解除」以外）の警報・注意報を抽出
+            const activeWarnings = chigasakiArea
+                ? chigasakiArea.warnings.filter(w => w.status !== '解除')
+                : [];
+
+            if (activeWarnings.length === 0) {
+                listEl.innerHTML = '<div class="warning-none">✅ 現在、注意報・警報はありません</div>';
+            } else {
+                // 特別警報 → 警報 → 注意報の順で表示
+                const order = { tokubetsu: 0, keiho: 1, chuiho: 2 };
+                activeWarnings.sort((a, b) => {
+                    const la = (WARNING_CODE_MAP[a.code] || {}).level || 'chuiho';
+                    const lb = (WARNING_CODE_MAP[b.code] || {}).level || 'chuiho';
+                    return (order[la] ?? 9) - (order[lb] ?? 9);
+                });
+                activeWarnings.forEach(w => {
+                    const info = WARNING_CODE_MAP[w.code] || { name: `コード${w.code}`, level: 'chuiho' };
+                    const levelLabel = info.level === 'tokubetsu' ? '特別警報' : info.level === 'keiho' ? '警報' : '注意報';
+                    const item = document.createElement('div');
+                    item.className = 'warning-item';
+                    item.innerHTML = `<span class="warning-badge badge-${info.level}">${levelLabel}</span><span class="warning-name">${info.name}</span>`;
+                    listEl.appendChild(item);
+                });
+            }
+
+            document.getElementById('jma-warning-loading').style.display = 'none';
+            document.getElementById('jma-warning-content').style.display = 'block';
+
+        } catch (e) {
+            console.error('JMA warning error:', e);
+            document.getElementById('jma-warning-loading').style.display = 'none';
+            document.getElementById('jma-warning-error').style.display = 'block';
+        }
+    }
+
+    // 気象庁 天気予報を取得して表示する関数
+    async function fetchJmaForecast() {
+        const forecastUrl = 'https://www.jma.go.jp/bosai/forecast/data/forecast/140000.json';
+        const overviewUrl = 'https://www.jma.go.jp/bosai/forecast/data/overview_forecast/140000.json';
+        try {
+            const [forecastRes, overviewRes] = await Promise.all([
+                fetch(forecastUrl),
+                fetch(overviewUrl)
+            ]);
+            if (!forecastRes.ok || !overviewRes.ok) throw new Error('JMA fetch failed');
+
+            const forecastData = await forecastRes.json();
+            const overviewData = await overviewRes.json();
+
+            // 1つ目のデータブロック（今日+明日+明後日の短期予報）
+            const shortTerm = forecastData[0];
+            const timeSeries0 = shortTerm.timeSeries[0]; // 天気・風・波
+            const timeSeries1 = shortTerm.timeSeries[1]; // 降水確率
+
+            // 茅ヶ崎は神奈川「東部」エリア (code: 140010)
+            const areaWeather = timeSeries0.areas.find(a => a.area.code === '140010') || timeSeries0.areas[0];
+            const areaPop    = timeSeries1.areas.find(a => a.area.code === '140010') || timeSeries1.areas[0];
+
+            // 今日（インデックス0）のデータを取得
+            const todayWeather = areaWeather.weathers ? areaWeather.weathers[0] : '--';
+
+            // 降水確率：今日分（timeSeries1の最初の時間帯）
+            const todayPop = areaPop.pops ? areaPop.pops[0] + '%' : '--';
+
+            document.getElementById('jma-weather').textContent = todayWeather;
+            document.getElementById('jma-pop').textContent     = todayPop;
+
+            // 概況テキスト
+            document.getElementById('jma-overview-text').textContent = overviewData.text || '';
+
+            document.getElementById('jma-loading').style.display = 'none';
+            document.getElementById('jma-forecast-content').style.display = 'block';
+
+        } catch (e) {
+            console.error('JMA forecast error:', e);
+            document.getElementById('jma-loading').style.display = 'none';
+            document.getElementById('jma-error').style.display = 'block';
+        }
+    }
+
+    // 概況テキストの折り畳みトグル
+    function toggleOverview() {
+        const el = document.getElementById('jma-overview-text');
+        const btn = document.getElementById('jma-overview-toggle');
+        if (el.style.display === 'none') {
+            el.style.display = 'block';
+            btn.textContent = '概況を閉じる ▲';
+        } else {
+            el.style.display = 'none';
+            btn.textContent = '概況を表示 ▼';
+        }
+    }
+
+    async function fetchWeatherData() {
+        try {
+            // 潮回りの計算を実行
+            calculateTide();
+            
+            // 潮汐データ（満潮・干潮）の取得を実行
+            fetchTideExtremes();
+
+            // 気象庁天気予報・注意報の取得
+            fetchJmaForecast();
+            fetchJmaWarning();
+
+            // 2つのAPIを同時に呼び出す
+            const [weatherRes, marineRes] = await Promise.all([
+                fetch(weatherUrl),
+                fetch(marineUrl)
+            ]);
+
+            if (!weatherRes.ok || !marineRes.ok) throw new Error("API Network response was not ok");
+
+            const weatherData = await weatherRes.json();
+            const marineData = await marineRes.json();
+
+            // 画面の要素にデータをセット
+            document.getElementById('temp').textContent = `${weatherData.current_weather.temperature} ℃`;
+            document.getElementById('wind').textContent = `${weatherData.current_weather.windspeed} m/s`;
+            
+            const windDirDegree = weatherData.current_weather.winddirection;
+            document.getElementById('wind-dir').textContent = getWindDirection16(windDirDegree);
+            
+            // 波の高さ（取得できた場合）
+            if (marineData.current && marineData.current.wave_height !== null && marineData.current.wave_height !== undefined) {
+                document.getElementById('wave-height').textContent = `${marineData.current.wave_height} m`;
+            } else {
+                document.getElementById('wave-height').textContent = "データなし";
+            }
+
+            // 海水温（取得できた場合）
+            if (marineData.current && marineData.current.sea_surface_temperature !== null && marineData.current.sea_surface_temperature !== undefined) {
+                document.getElementById('sea-temp').textContent = `${marineData.current.sea_surface_temperature} ℃`;
+            } else {
+                document.getElementById('sea-temp').textContent = "データなし";
+            }
+
+            // ローディングを消してコンテンツを表示
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('weather-content').style.display = 'block';
+
+            // 取得完了時の時刻を表示
+            displayFetchTime();
+
+        } catch (error) {
+            console.error("Fetch error:", error);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+        }
+    }
+
+    // ページ読み込み時に実行
+    window.onload = fetchWeatherData;
 </script>
+
 </body>
 </html>
