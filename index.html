@@ -106,21 +106,21 @@
 
     <div id="weather-content" style="display: none;">
         <div class="weather-box">
-            <h2>現在の天気</h2>
+            <h2>現在の天気 <span style="font-size:0.75rem; font-weight:normal; color:#888;">（Open-Meteo）</span></h2>
             <div class="data-row"><span>気温:</span> <span id="temp">-- ℃</span></div>
             <div class="data-row"><span>風速:</span> <span id="wind">-- m/s</span></div>
             <div class="data-row"><span>風向:</span> <span id="wind-dir">-- °</span></div>
         </div>
 
         <div class="weather-box">
-            <h2>海面コンディション (予測)</h2>
+            <h2>海面コンディション (予測) <span style="font-size:0.75rem; font-weight:normal; color:#888;">（Open-Meteo）</span></h2>
             <div class="data-row"><span>波の高さ:</span> <span id="wave-height">-- m</span></div>
             <div class="data-row"><span>海水温:</span> <span id="sea-temp">-- ℃</span></div>
             <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">※波と海水温のデータは沖合の予測値ベースです。</p>
         </div>
 
         <div class="weather-box">
-            <h2>潮汐情報</h2>
+            <h2>潮汐情報 <span style="font-size:0.75rem; font-weight:normal; color:#888;">（Stormglass）</span></h2>
             <div class="data-row"><span>潮回り:</span> <span id="tide-type">--</span></div>
             <div id="tide-extremes-container">
                 <div class="data-row"><span>満潮・干潮:</span> <span id="tide-status">読み込み中...</span></div>
@@ -140,8 +140,6 @@
             <div id="jma-loading" style="color:#666; font-size:0.9rem;">取得中...</div>
             <div id="jma-forecast-content" style="display:none;">
                 <div class="data-row"><span>天気:</span> <span id="jma-weather">--</span></div>
-                <div class="data-row"><span>風:</span> <span id="jma-wind">--</span></div>
-                <div class="data-row"><span>波:</span> <span id="jma-wave">--</span></div>
                 <div class="data-row"><span>降水確率:</span> <span id="jma-pop">--</span></div>
                 <button class="toggle-btn" id="jma-overview-toggle" onclick="toggleOverview()">概況を表示 ▼</button>
                 <div class="jma-overview" id="jma-overview-text"></div>
@@ -153,7 +151,8 @@
     <div class="footer">
         データ提供元: 
         <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a> / 
-        <a href="https://stormglass.io/" target="_blank">Stormglass</a><br>
+        <a href="https://stormglass.io/" target="_blank">Stormglass</a> / 
+        <a href="https://www.jma.go.jp/bosai/forecast/" target="_blank">気象庁JSON</a><br>
         ※本アプリは参考用です。実際の活動時は必ず目視や公式発表も併せて確認してください。
     </div>
 </div>
@@ -448,15 +447,11 @@
 
             // 今日（インデックス0）のデータを取得
             const todayWeather = areaWeather.weathers ? areaWeather.weathers[0] : '--';
-            const todayWind    = areaWeather.winds   ? areaWeather.winds[0]   : '--';
-            const todayWave    = areaWeather.waves   ? areaWeather.waves[0]   : '--';
 
             // 降水確率：今日分（timeSeries1の最初の時間帯）
             const todayPop = areaPop.pops ? areaPop.pops[0] + '%' : '--';
 
             document.getElementById('jma-weather').textContent = todayWeather;
-            document.getElementById('jma-wind').textContent    = todayWind;
-            document.getElementById('jma-wave').textContent    = todayWave;
             document.getElementById('jma-pop').textContent     = todayPop;
 
             // 概況テキスト
