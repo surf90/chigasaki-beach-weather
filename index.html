@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>茅ヶ崎ヘッドランド 気象情報</title>
+    <title>茅ヶ崎ヘッドランド 気象情報(試作版)</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -70,6 +70,8 @@
             font-weight: bold;
         }
     </style>
+    <!-- Chart.jsのライブラリを読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -102,7 +104,13 @@
             <div id="tide-extremes-container">
                 <div class="data-row"><span>満潮・干潮:</span> <span id="tide-status">読み込み中...</span></div>
             </div>
-            <p style="font-size: 0.85rem; color: #666; margin-top: 5px;">※正確な潮位は<a href="https://www.data.jma.go.jp/gmd/kaiyou/db/tide/suisan/suisan.php?stn=EN" target="_blank">気象庁の潮位表（江の島）</a>等をご確認ください。</p>
+            
+            <!-- タイドグラフ表示用コンテナ -->
+            <div id="tide-chart-container" style="display: none; margin-top: 20px; height: 160px;">
+                <canvas id="tideChart"></canvas>
+            </div>
+            
+            <p style="font-size: 0.85rem; color: #666; margin-top: 10px;">※正確な潮位は<a href="https://www.data.jma.go.jp/gmd/kaiyou/db/tide/suisan/suisan.php?stn=EN" target="_blank">気象庁の潮位表（江の島）</a>等をご確認ください。</p>
         </div>
     </div>
     
@@ -168,6 +176,18 @@
         document.getElementById('tide-type').textContent = `${tideType} (月齢: ${age.toFixed(1)})`;
     }
 
+    // プレビュー用のダミー潮汐データを生成する関数
+    function getDummyTideExtremes() {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0); // 今日の0時基準
+        return [
+            { time: new Date(now.getTime() + 5 * 3600000).toISOString(), type: 'high', height: 1.4 },
+            { time: new Date(now.getTime() + 11 * 3600000).toISOString(), type: 'low', height: 0.3 },
+            { time: new Date(now.getTime() + 17 * 3600000).toISOString(), type: 'high', height: 1.5 },
+            { time: new Date(now.getTime() + 23 * 3600000).toISOString(), type: 'low', height: 0.4 }
+        ];
+    }
+
     // GitHub Actionsで自動生成されたJSONから満潮・干潮時間を取得する関数
     async function fetchTideExtremes() {
         const tideStatusEl = document.getElementById('tide-status');
@@ -193,11 +213,26 @@
 
         } catch (error) {
             console.warn(error.message); // エラーで画面を止めないよう警告レベルに変更
-            tideStatusEl.textContent = "データ未更新（またはプレビュー環境）";
+            
+            // プレビュー環境でもグラフを確認できるようにダミーデータで描画
+            const dummyData = getDummyTideExtremes();
+            displayTideData(dummyData);
+            
+            // ダミーデータであることを明記
+            const container = document.getElementById('tide-extremes-container');
+            const note = document.createElement('div');
+            note.style.fontSize = '0.8rem';
+            note.style.color = '#d9534f';
+            note.style.textAlign = 'right';
+            note.style.marginTop = '5px';
+            note.textContent = '※プレビュー環境のためダミー波形を表示しています';
+            container.appendChild(note);
         }
     }
 
-    // 潮汐データをHTMLに表示する関数
+    let tideChartInstance = null; // グラフのインスタンス
+
+    // 潮汐データをHTMLに表示し、グラフを描画する関数
     function displayTideData(extremes) {
         const container = document.getElementById('tide-extremes-container');
         container.innerHTML = ''; // 中身をクリア
@@ -207,6 +242,9 @@
             return;
         }
 
+        const chartDataPoints = [];
+        let hasHeightData = false;
+
         extremes.forEach(item => {
             // Stormglassの時間はUTCなので、日本時間に変換
             const dateObj = new Date(item.time);
@@ -215,13 +253,139 @@
             const typeStr = item.type === 'high' ? '満潮' : '干潮';
             const color = item.type === 'high' ? '#d9534f' : '#0275d8'; // 満潮は赤系、干潮は青系
 
+            // 高さデータがあれば取得
+            let heightValue = item.type === 'high' ? 1 : 0;
+            let heightText = '';
+            if (item.height !== undefined && item.height !== null) {
+                hasHeightData = true;
+                heightValue = parseFloat(item.height);
+                heightText = ` (${heightValue.toFixed(1)}m)`;
+            }
+
             const row = document.createElement('div');
             row.className = 'data-row';
-            row.innerHTML = `<span>${typeStr}:</span> <span style="color: ${color}; font-weight: bold;">${timeStr}</span>`;
+            row.innerHTML = `<span>${typeStr}:</span> <span style="color: ${color}; font-weight: bold;">${timeStr}${heightText}</span>`;
             container.appendChild(row);
+
+            // グラフ用にデータを格納
+            chartDataPoints.push({
+                timeMs: dateObj.getTime(),
+                timeStr: timeStr,
+                type: item.type,
+                height: heightValue
+            });
         });
+
+        // グラフを描画
+        drawTideChart(chartDataPoints, hasHeightData);
     }
 
+    // Chart.jsを用いてタイドグラフを描画する関数
+    function drawTideChart(extremes, hasHeightData) {
+        const chartContainer = document.getElementById('tide-chart-container');
+        chartContainer.style.display = 'block';
+
+        const ctx = document.getElementById('tideChart').getContext('2d');
+        
+        // 時間順にソート
+        extremes.sort((a, b) => a.timeMs - b.timeMs);
+
+        const labels = [];
+        const dataPoints = [];
+        const pointRadii = [];
+        const pointColors = [];
+
+        // コサイン曲線を用いて、極値（満潮・干潮）の間を滑らかに補間する
+        if (extremes.length >= 2) {
+            const step = 30 * 60 * 1000; // 30分刻みで補間
+            for (let i = 0; i < extremes.length - 1; i++) {
+                const pt1 = extremes[i];
+                const pt2 = extremes[i + 1];
+
+                // 実際の極値ポイント
+                labels.push(pt1.timeStr);
+                dataPoints.push(pt1.height);
+                pointRadii.push(5); // 実データは点を大きく
+                pointColors.push(pt1.type === 'high' ? '#d9534f' : '#0275d8');
+
+                // pt1 と pt2 の間をコサイン曲線で埋める
+                for (let t = pt1.timeMs + step; t < pt2.timeMs; t += step) {
+                    const normalizedT = (t - pt1.timeMs) / (pt2.timeMs - pt1.timeMs);
+                    // (1 - cos(π * t)) / 2 で 0〜1 の滑らかなS字曲線を作る
+                    const cosVal = (1 - Math.cos(Math.PI * normalizedT)) / 2;
+                    const h = pt1.height + (pt2.height - pt1.height) * cosVal;
+
+                    const dateObj = new Date(t);
+                    labels.push(dateObj.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }));
+                    dataPoints.push(h);
+                    pointRadii.push(0); // 補間点はマーカーを隠す
+                    pointColors.push('#0056b3');
+                }
+            }
+            // 最後の極値ポイント
+            const lastPt = extremes[extremes.length - 1];
+            labels.push(lastPt.timeStr);
+            dataPoints.push(lastPt.height);
+            pointRadii.push(5);
+            pointColors.push(lastPt.type === 'high' ? '#d9534f' : '#0275d8');
+        }
+
+        // 以前のグラフがあれば破棄して再描画
+        if (tideChartInstance) {
+            tideChartInstance.destroy();
+        }
+
+        tideChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: hasHeightData ? '潮位 (m)' : '潮位イメージ',
+                    data: dataPoints,
+                    borderColor: '#0056b3',
+                    backgroundColor: 'rgba(0, 86, 179, 0.15)',
+                    borderWidth: 2,
+                    pointBackgroundColor: pointColors,
+                    pointBorderColor: '#fff',
+                    pointRadius: pointRadii,
+                    pointHoverRadius: 7,
+                    fill: true,
+                    tension: 0.4 
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return hasHeightData ? context.parsed.y.toFixed(2) + ' m' : '潮位イメージ';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        display: hasHeightData,
+                        suggestedMin: hasHeightData ? Math.min(...dataPoints) - 0.2 : -0.2,
+                        suggestedMax: hasHeightData ? Math.max(...dataPoints) + 0.2 : 1.2,
+                        ticks: {
+                            callback: function(value) { return value.toFixed(1) + ' m'; }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxTicksLimit: 6, // X軸の時刻ラベルが重ならないように間引く
+                            maxRotation: 0
+                        },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
 
     async function fetchWeatherData() {
         try {
