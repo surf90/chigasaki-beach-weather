@@ -1,44 +1,27 @@
-# chigasaki-beach-weather (Streamlit Version)
+# chigasaki-beach-weather
 
-茅ヶ崎ヘッドランド（Tバー）の波情報・天気・潮汐を表示するWebアプリです。
-Windows環境で動作確認を行い、iPhoneなどのスマートフォンからも利用可能です。
+茅ヶ崎ヘッドランド（Tバー）周辺の天気・波情報・潮汐を確認できる、サーフ90茅ヶ崎ライフセービングクラブ向けのWebアプリです。
+スマートフォン（iPhone/Android）およびPCのブラウザから直接利用できます。
 
-## 必要要件
+## 特徴
 
-- Windows PC
-- Python 3.8以上
+- 特別なアプリのインストール不要
+- ブラウザのみで動作（バックエンドサーバー不要）
+- スマートフォンでの閲覧に最適化されたレイアウト
 
-## セットアップ手順（Windows）
+## 使い方（ローカルでの確認方法）
 
-1.  **Pythonのインストール**
-    *   まだインストールしていない場合は、[Python公式サイト](https://www.python.org/downloads/)からインストーラーをダウンロードして実行してください。
-    *   **重要**: インストール時に "Add Python to PATH" にチェックを入れてください。
+現在のバージョンは静的なHTML/JavaScriptで構築されているため、特別な開発環境は不要です。
 
-2.  **プロジェクトフォルダへの移動**
-    *   コマンドプロンプト（またはPowerShell）を開きます。
-    *   このフォルダ (`Surf90Chigasaki_Streamlit`) まで移動します。
-        ```cmd
-        cd path\to\Surf90Chigasaki_Streamlit
-        ```
+1. このリポジトリ（フォルダ）をPCにダウンロードします。
+2. フォルダ内にある `index.html` をダブルクリックして、ブラウザ（ChromeやEdge、Safariなど）で開きます。
+3. 自動的に最新の気象情報が取得・表示されます。
 
-3.  **ライブラリのインストール**
-    *   以下のコマンドを実行して、必要なツール（Streamlitなど）をインストールします。
-        ```cmd
-        pip install -r requirements.txt
-        ```
+## 今後の公開について（予定）
 
-## アプリの起動方法
+GitHub Pages等を利用して、URL（例: `https://xxxx.github.io/chigasaki-beach-weather/`）をメンバーに共有するだけで、いつでもスマホからアクセスできるようにする予定です。
 
-1.  **アプリの実行**
-    *   以下のコマンドを入力します。
-        ```cmd
-        streamlit run app.py
-        ```
+## 使用技術・API
 
-2.  **ブラウザで確認**
-    *   自動的にブラウザが立ち上がり、アプリが表示されます。
-    *   もし立ち上がらない場合は、画面に表示されるURL（例: `http://localhost:8501`）をブラウザのアドレスバーに入力してください。
-
-## アプリの終了
-
-*   コマンドプロンプトの画面で `Ctrl + C` を押すと終了します。
+- HTML / CSS / JavaScript
+- 気象データ: [Open-Meteo API](https://open-meteo.com/) (登録不要・無料で利用可能なAPI)****
