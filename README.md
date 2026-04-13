@@ -31,4 +31,4 @@
 
 - HTML / CSS / JavaScript
 - 気象データ: [Open-Meteo API](https://open-meteo.com/) (登録不要・無料で利用可能なAPI)****
-- 潮汐データ：[Stormglass API](https://stormglass.io/)(登録必要・一日10回無料利用可能なAPI)****
+- 潮汐データ: [Stormglass API](https://stormglass.io/)(登録必要・一日10回無料利用可能なAPI)****
