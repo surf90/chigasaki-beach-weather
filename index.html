@@ -21,21 +21,17 @@ lang: ja
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary">
 
-    <!-- 正規URL -->
     <link rel="canonical" href="{{ site.url }}{{ site.baseurl }}/">
 
-    <!-- OGP 追加タグ -->
     <meta property="og:url"       content="{{ site.url }}{{ site.baseurl }}/">
     <meta property="og:locale"    content="ja_JP">
     <meta property="og:site_name" content="{{ page.title }}">
     <meta property="og:image"     content="{{ site.url }}{{ site.baseurl }}/favicon.ico">
 
-    <!-- Twitter Card 追加タグ -->
     <meta name="twitter:title"       content="{{ page.title }}">
     <meta name="twitter:description" content="{{ page.description }}">
     <meta name="twitter:image"       content="{{ site.url }}{{ site.baseurl }}/favicon.ico">
 
-    <!-- JSON-LD 構造化データ -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -79,7 +75,7 @@ lang: ja
         }
         body {
             font-family: Inter, "Noto Sans JP", sans-serif;
-            background-color: #e8f6fa;
+            background-color: #eef9ff; /* DESIGN.md: Light Blue BG */
             color: #222222;
             margin: 0;
             padding: 24px 16px;
@@ -106,14 +102,14 @@ lang: ja
             line-height: 1.25;
         }
         .subtitle {
-        font-size: 12px;
-        color: #757575;
-        display: block;
-        margin-bottom: 24px;
-        text-align: center; 
+            font-size: 12px;
+            color: #757575;
+            display: block;
+            margin-bottom: 24px;
+            text-align: center; 
         }
         .weather-box {
-            background: #e8f6fa;
+            background: #f7f7f7; /* DESIGN.md: Surface Light */
             padding: 20px 24px;
             border-radius: 10px;
             margin-bottom: 16px;
@@ -141,21 +137,6 @@ lang: ja
         }
         .data-row span:last-child {
             font-weight: 600;
-        }
-        .footer {
-            margin-top: 24px;
-            font-size: 12px;
-            text-align: center;
-            color: #707070;
-            line-height: 1.7;
-            letter-spacing: -0.28px;
-        }
-        .footer a {
-            color: #0275fd;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
         }
         .loading {
             text-align: center;
@@ -200,7 +181,7 @@ lang: ja
         }
         .toggle-btn:hover {
             background: #222222;
-            color: #e8f6fa;
+            color: #f7f7f7;
         }
         .warning-none {
             font-size: 14px;
@@ -222,7 +203,7 @@ lang: ja
             font-family: "IBM Plex Mono", monospace;
             padding: 2px 10px;
             border-radius: 500px;
-            color: #e8f6fa;
+            color: #eef9ff;
             letter-spacing: -0.44px;
         }
         .badge-tokubetsu { background-color: #7c3aed; }
@@ -255,8 +236,43 @@ lang: ja
         p.note a:hover {
             text-decoration: underline;
         }
+        
+        /* フッター全体の基本設定 */
+        .footer {
+            margin-top: 32px;
+            font-size: 14px;
+            color: #707070;
+            line-height: 1.7;
+            text-align: center;
+            padding: 24px 0 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px; 
+        }
+        .footer a {
+            color: #0275fd; /* STUDIO Blue */
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .footer a:hover {
+            opacity: 0.7;
+            text-decoration: underline;
+        }
+        /* 免責事項（さらに小さく、少し文字を詰めて塊感を出す） */
+        .footer-disclaimer {
+            font-size: 11px;
+            letter-spacing: -0.28px;
+            color: #888888;
+            line-height: 1.5;
+        }
+        /* コピーライト（モノスペースフォント） */
+        .footer-copyright {
+            font-family: "IBM Plex Mono", monospace;
+            font-size: 12px;
+            letter-spacing: -0.28px;
+            margin-top: 8px;
+        }
     </style>
-    <!-- Chart.jsのライブラリを読み込み -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -278,7 +294,6 @@ lang: ja
                 <div class="data-row"><span>満潮・干潮:</span> <span id="tide-status">読み込み中...</span></div>
             </div>
 
-            <!-- タイドグラフ表示用コンテナ -->
             <div id="tide-chart-container" style="display: none; margin-top: 20px; height: 160px;">
                 <canvas id="tideChart"></canvas>
             </div>
@@ -293,7 +308,6 @@ lang: ja
             <p class="note">※波と海水温のデータは沖合の予測値ベースです。</p>
         </div>
 
-        <!-- 気象庁 今日の天気予報ブロック -->
         <div class="weather-box" id="jma-forecast-box">
             <h2>今日の天気予報 <span style="font-size:11px; font-weight:400; color:#707070; letter-spacing:-0.28px;">（気象庁）</span></h2>
             <div id="jma-loading" style="color:#707070; font-size:14px;">取得中...</div>
@@ -306,7 +320,6 @@ lang: ja
             <div id="jma-error" style="display:none; color:#c0392b; font-size:14px;">天気予報の取得に失敗しました。</div>
         </div>
 
-        <!-- 気象庁 注意報・警報ブロック -->
         <div class="weather-box" id="jma-warning-box">
             <h2>注意報・警報 <span style="font-size:11px; font-weight:400; color:#707070; letter-spacing:-0.28px;">（気象庁）</span></h2>
             <div id="jma-warning-loading" style="color:#707070; font-size:14px;">取得中...</div>
@@ -327,20 +340,26 @@ lang: ja
     </div>
     
     <div class="footer">
-        データ提供元:
-        <a href="https://www.jma.go.jp/bosai/forecast/" target="_blank">気象庁</a> /
-        <a href="https://svs.gsfc.nasa.gov/gallery/moonphase/" target="_blank">NASA SVS</a> /
-        <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a> /
-        <a href="https://stormglass.io/" target="_blank">Stormglass</a><br>
-        <br>
-        <small>
-        ※ 本アプリは参考用です。実際の活動時は必ず目視や公式発表も併せて確認してください。<br>
-        ※ 海のコンディションは急変します。無理な入水は控え、安全にマリンスポーツを楽しみましょう。<br>
-        </small>
-        <br>
-        茅ヶ崎でのライフセービング活動の情報は<a href="https://www.instagram.com/surf90chigasakilsc/" target="_blank" rel="noopener noreferrer">こちら</a><br>
-        <br>
-        &copy; 2026 ISHIKAWA, Natsuki | MIT License
+        <div class="footer-data">
+            データ提供元:
+            <a href="https://www.jma.go.jp/bosai/forecast/" target="_blank">気象庁</a> /
+            <a href="https://svs.gsfc.nasa.gov/gallery/moonphase/" target="_blank">NASA SVS</a> /
+            <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a> /
+            <a href="https://stormglass.io/" target="_blank">Stormglass</a>
+        </div>
+        
+        <div class="footer-disclaimer">
+            ※ 本アプリは参考用です。実際の活動時は必ず目視や公式発表も併せて確認してください。<br>
+            ※ 海のコンディションは急変します。無理な入水は控え、安全にマリンスポーツを楽しみましょう。
+        </div>
+        
+        <div class="footer-info">
+            茅ヶ崎でのライフセービング活動の情報は<a href="https://www.instagram.com/surf90chigasakilsc/" target="_blank" rel="noopener noreferrer">こちら</a>
+        </div>
+        
+        <div class="footer-copyright">
+            &copy; 2026 ISHIKAWA, Natsuki | MIT License
+        </div>
     </div>
 </div>
 
