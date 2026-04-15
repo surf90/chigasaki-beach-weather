@@ -1,7 +1,5 @@
-url: "https://surf90.github.io" # あなたのGitHub Pagesのドメイン
-baseurl: "/chigasaki-beach-weather"     # リポジトリ名
 plugins: 
-  - jekyll-sitemap                # これが入っていると自動生成されます
+  - jekyll-sitemap
 show_downloads: false
 google_analytics: surf90
 # テーマによっては以下のようなフラグで制御します
