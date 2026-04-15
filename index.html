@@ -106,10 +106,11 @@ lang: ja
             line-height: 1.25;
         }
         .subtitle {
-            font-size: 12px;
-            color: #757575;
-            display: block;
-            margin-bottom: 24px;
+        font-size: 12px;
+        color: #757575;
+        display: block;
+        margin-bottom: 24px;
+        text-align: center; 
         }
         .weather-box {
             background: #e8f6fa;
@@ -167,7 +168,7 @@ lang: ja
             font-size: 14px;
         }
         .current-time {
-            text-align: center;
+            text-align: right;
             margin-bottom: 16px;
             color: #707070;
             font-size: 12px;
@@ -241,7 +242,7 @@ lang: ja
             letter-spacing: -0.28px;
         }
         p.note {
-            font-size: 13px;
+            font-size: 11px;
             color: #707070;
             margin-top: 8px;
             margin-bottom: 0;
@@ -311,7 +312,7 @@ lang: ja
             <div id="jma-warning-loading" style="color:#707070; font-size:14px;">取得中...</div>
             <div id="jma-warning-content" style="display:none;">
                 <div id="jma-warning-list"></div>
-                <p class="note">※必ず<a href="https://www.data.jma.go.jp/multi/warn/warn_detail.html?code=140010&selected_code=1421500&warning=all&lang=jp" target="_blank">気象庁HP</a>で最新の情報を確認してください。</p>
+                <p class="note"><strong>※必ず<a href="https://www.data.jma.go.jp/multi/warn/warn_detail.html?code=140010&selected_code=1421500&warning=all&lang=jp" target="_blank">気象庁HP</a>で最新の情報を確認してください。</strong></p>
             </div>
             <div id="jma-warning-error" style="display:none; color:#c0392b; font-size:14px;">注意報情報の取得に失敗しました。</div>
         </div>
