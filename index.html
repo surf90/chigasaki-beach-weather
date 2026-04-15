@@ -725,7 +725,7 @@ lang: ja
 
             // 発表中（status が「解除」以外）の警報・注意報を抽出
             const activeWarnings = chigasakiArea
-                ? chigasakiArea.warnings.filter(w => w.status !== '解除')
+                ? chigasakiArea.warnings.filter(w => w.status !== '解除' && w.code)
                 : [];
 
             if (activeWarnings.length === 0) {
