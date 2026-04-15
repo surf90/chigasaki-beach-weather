@@ -367,16 +367,26 @@ lang: ja
         if (age < 0) age += 29.530588853;
 
         const MathRoundAge = Math.round(age) % 30;
-        let tideType = "若潮"; // デフォルト
-        
-        if (MathRoundAge <= 2 || MathRoundAge >= 28 || (MathRoundAge >= 13 && MathRoundAge <= 17)) {
+        let tideType = "";
+
+        if (MathRoundAge === 29 || MathRoundAge <= 2 || (MathRoundAge >= 14 && MathRoundAge <= 17)) {
+            // 大潮：新月(29,0,1,2) と 満月(14,15,16,17)
             tideType = "大潮";
-        } else if ((MathRoundAge >= 3 && MathRoundAge <= 6) || (MathRoundAge >= 10 && MathRoundAge <= 12) || (MathRoundAge >= 18 && MathRoundAge <= 21) || (MathRoundAge >= 25 && MathRoundAge <= 27)) {
+        } else if ((MathRoundAge >= 3 && MathRoundAge <= 6) || (MathRoundAge >= 18 && MathRoundAge <= 21) || (MathRoundAge >= 12 && MathRoundAge <= 13) || (MathRoundAge >= 27 && MathRoundAge <= 28)) {
+            // 中潮：大潮後(3〜6, 18〜21) と 若潮後(12〜13, 27〜28)
             tideType = "中潮";
-        } else if (MathRoundAge === 7 || MathRoundAge === 8 || MathRoundAge === 22 || MathRoundAge === 23) {
+        } else if ((MathRoundAge >= 7 && MathRoundAge <= 9) || (MathRoundAge >= 22 && MathRoundAge <= 24)) {
+            // 小潮：(7〜9, 22〜24)
             tideType = "小潮";
-        } else if (MathRoundAge === 9 || MathRoundAge === 24) {
+        } else if (MathRoundAge === 10 || MathRoundAge === 25) {
+            // 長潮：(10, 25)
             tideType = "長潮";
+        } else if (MathRoundAge === 11 || MathRoundAge === 26) {
+            // 若潮：(11, 26)
+            tideType = "若潮";
+        } else {
+            // 計算外の数値が入った場合のフォールバック
+            tideType = "不明";
         }
 
         document.getElementById('tide-type').textContent = `${tideType} (月齢: ${age.toFixed(1)})`;
