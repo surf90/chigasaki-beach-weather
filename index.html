@@ -403,6 +403,7 @@ lang: ja
         // 1. 対象日（今日）の「12時00分」のDateオブジェクトを生成する
         const targetDate = new Date();
         targetDate.setHours(12, 0, 0, 0); // 時・分・秒・ミリ秒を12:00:00.000に固定
+        const now = new Date();
     
         let age = null;
         let ageSource = "計算値";
