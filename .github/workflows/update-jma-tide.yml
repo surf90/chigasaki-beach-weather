@@ -1,0 +1,33 @@
+name: Update JMA Tide Data
+
+on:
+  schedule:
+    # 1月1日 UTC 15:05（= JST 1月2日 0:05）と 7月1日に実行
+    - cron: '5 15 1 1 *'
+    - cron: '5 15 1 7 *'
+  workflow_dispatch: # 手動実行ボタンも有効化
+
+jobs:
+  update-jma-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Fetch JMA Tide Data
+      run: python scripts/generate_tide.py
+
+    - name: Commit and Push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/tidedata.json
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update JMA tide data" && git push)

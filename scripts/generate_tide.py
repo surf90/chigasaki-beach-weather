@@ -81,14 +81,15 @@ def parse_jma_tide_data(year, station_code="D8"):
         return None
 
 if __name__ == "__main__":
-    target_year = input("取得する年を西暦で入力してください（例: 2026）: ")
-    
+    # GitHub Actionsで自動実行できるよう、現在の年を自動取得
+    target_year = datetime.now().year
+
     print(f"気象庁から {target_year} 年の潮汐データを取得中...")
-    
-    result_data = parse_jma_tide_data(int(target_year))
+
+    result_data = parse_jma_tide_data(target_year)
     
     if result_data:
-        output_filename = "tidedata.json"
+        output_filename = "data/tidedata.json"
         with open(output_filename, "w", encoding="utf-8") as f:
             json.dump(result_data, f, ensure_ascii=False, indent=2)
         print(f"正常に {output_filename} を生成しました。")
