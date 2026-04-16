@@ -452,7 +452,7 @@ lang: ja
                 <span class="hero-card-label">🌊 波の高さ</span>
                 <div class="hero-value-group">
                     <span class="hero-card-value" id="hero-wave">--</span>
-                    <span class="hero-card-unit"> m</span>
+                    <span class="hero-card-unit">&nbsp;m</span>
                 </div>
             </div>
             <div class="hero-card" onclick="document.getElementById('marine-box').scrollIntoView({behavior:'smooth',block:'start'})" style="cursor:pointer;">
@@ -792,7 +792,8 @@ lang: ja
                 hasHeightData = true;
                 heightValue = parseFloat(item.height);
                 // カッコをグレーにし、太字を解除
-                heightText = ` <span style="color: #888888; font-weight: normal; font-size: 0.85em;">(${heightValue.toFixed(1)}m)</span>`;
+                // toFixed(1)} と m の間に半角スペースを追加
+                heightText = ` <span style="color: #888888; font-weight: normal; font-size: 0.85em;">(${heightValue.toFixed(1)} m)</span>`;
             }
 
             const formattedTime = `${timeStr}${heightText}`;
