@@ -62,8 +62,8 @@ lang: ja
             "name": "茅ヶ崎ヘッドランド",
             "geo": {
               "@type": "GeoCoordinates",
-              "latitude": 35.318,
-              "longitude": 139.410
+              "latitude": 35.3175,
+              "longitude": 139.4151
             }
           }
         }
@@ -361,7 +361,7 @@ lang: ja
             <div id="jma-warning-loading" style="color:#707070; font-size:14px;">取得中...</div>
             <div id="jma-warning-content" style="display:none;">
                 <div id="jma-warning-list"></div>
-                <p class="note"><strong>※必ず<a href="https://www.data.jma.go.jp/multi/warn/warn_detail.html?code=140010&selected_code=1421500&warning=all&lang=jp" target="_blank">気象庁HP</a>で最新の情報を確認してください！</strong></p>
+                <p class="note"><strong>※必ず<a href="https://www.data.jma.go.jp/multi/warn/warn_detail.html?code=140010&selected_code=1420700&warning=all&lang=jp" target="_blank">気象庁HP</a>で最新の情報を確認してください！</strong></p>
             </div>
             <div id="jma-warning-error" style="display:none; color:#c0392b; font-size:14px;">注意報情報の取得に失敗しました。</div>
         </div>
@@ -401,8 +401,8 @@ lang: ja
 
 <script>
     // 茅ヶ崎ヘッドランド付近の緯度経度
-    const LAT = 35.318;
-    const LON = 139.410;
+    const LAT = 35.3175;
+    const LON = 139.4151;
 
     // データ取得時点の日付と時刻を表示する関数
     function displayFetchTime() {
@@ -800,7 +800,7 @@ lang: ja
         '38': { name: '高潮特別警報',   level: 'tokubetsu' },
     };
 
-    // 気象庁 注意報・警報を取得して表示する関数（茅ヶ崎市 1421500）
+    // 気象庁 注意報・警報を取得して表示する関数（茅ヶ崎市 1420700）
     async function fetchJmaWarning() {
         // 命に関わる情報は秒単位でキャッシュ回避して直接取得
         const secBuster = Math.floor(Date.now() / 1000);
@@ -812,7 +812,7 @@ lang: ja
 
             // areaTypes[1] が市区町村レベル
             const cityAreas = data.areaTypes && data.areaTypes[1] ? data.areaTypes[1].areas : [];
-            const chigasakiArea = cityAreas.find(a => a.code === '1420500');
+            const chigasakiArea = cityAreas.find(a => a.code === '1420700');
 
             const listEl = document.getElementById('jma-warning-list');
             listEl.innerHTML = '';
