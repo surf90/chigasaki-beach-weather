@@ -33,7 +33,7 @@ try:
         data = json.loads(response.read().decode())
         
         # 取得したデータを tide_data.json として保存する
-        with open('tide_data.json', 'w', encoding='utf-8') as f:
+        with open('data/tide_data.json', 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
         print("Successfully fetched and saved tide_data.json")
 
