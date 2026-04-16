@@ -105,7 +105,7 @@ lang: ja
         h1 {
             text-align: center;
             margin-top: 0;
-            margin-bottom: 24px;
+            margin-bottom: 12px; /* 24pxから12pxに変更して間隔を半分に */
             line-height: 1.25;
             display: flex;
             align-items: center;
@@ -430,7 +430,7 @@ lang: ja
 
 <div class="container">
     <h1><span class="logo-text">ちがログ</span> <span class="title-divider">|</span> <small>茅ヶ崎の海情報</small></h1>
-    <span class="subtitle">茅ヶ崎の海を、５秒でログする。</span>
+    <span class="subtitle">茅ヶ崎の海のログが、５秒でわかる。</span>
     
     <div id="skeleton-loading">
         <div class="hero-cards" style="margin-bottom:20px;">
@@ -452,7 +452,7 @@ lang: ja
                 <span class="hero-card-label">🌊 波の高さ</span>
                 <div class="hero-value-group">
                     <span class="hero-card-value" id="hero-wave">--</span>
-                    <span class="hero-card-unit">m</span>
+                    <span class="hero-card-unit"> m</span>
                 </div>
             </div>
             <div class="hero-card" onclick="document.getElementById('marine-box').scrollIntoView({behavior:'smooth',block:'start'})" style="cursor:pointer;">
@@ -473,9 +473,9 @@ lang: ja
 
         <div class="weather-box" id="tide-info-box">
             <h2>🌊 潮汐情報 <span style="font-size:11px; font-weight:400; color:#707070; letter-spacing:-0.28px;">（Stormglass）</span></h2>
-            <div class="data-row"><span>潮回り:</span> <span id="tide-type">--</span></div>
+            <div class="data-row"><span>潮回り :</span> <span id="tide-type">--</span></div>
             <div id="tide-extremes-container">
-                <div class="data-row"><span>満潮・干潮:</span> <span id="tide-status">読み込み中...</span></div>
+                <div class="data-row"><span>満 潮・干 潮 :</span> <span id="tide-status">読み込み中...</span></div>
             </div>
 
             <div id="tide-chart-container" style="display: none; margin-top: 20px; height: 160px;">
@@ -487,8 +487,8 @@ lang: ja
 
         <div class="weather-box" id="marine-box">
             <h2>🌊 海面状況 <small>(予測)</small> <span style="font-size:11px; font-weight:400; color:#707070; letter-spacing:-0.28px;">（Open-Meteo）</span></h2>
-            <div class="data-row"><span>波の高さ:</span> <span id="wave-height">-- m</span></div>
-            <div class="data-row"><span>海水温:</span> <span id="sea-temp">-- ℃</span></div>
+            <div class="data-row"><span>波の高さ :</span> <span id="wave-height">-- m</span></div>
+            <div class="data-row"><span>海水温 :</span> <span id="sea-temp">--℃</span></div>
             <p class="note">※波と海水温のデータは沖合の予測値ベースです。</p>
         </div>
 
@@ -496,8 +496,8 @@ lang: ja
             <h2>🌤️ 天気予報 <span style="font-size:11px; font-weight:400; color:#707070; letter-spacing:-0.28px;">（気象庁）</span></h2>
             <div id="jma-loading" style="color:#707070; font-size:14px;">取得中...</div>
             <div id="jma-forecast-content" style="display:none;">
-                <div class="data-row"><span>天気:</span> <span id="jma-weather">--</span></div>
-                <div class="data-row"><span>降水確率:</span> <span id="jma-pop">--</span></div>
+                <div class="data-row"><span>天 気 :</span> <span id="jma-weather">--</span></div>
+                <div class="data-row"><span>降水確率 :</span> <span id="jma-pop">--</span></div>
                 <div class="data-row" id="jma-typhoon-notice" style="display:none; color:#c0392b; font-weight:bold;">⚠ 台風情報あり</div>
                 <button class="toggle-btn" id="jma-overview-toggle" onclick="toggleOverview()">概況を表示 ▼</button>
                 <div class="jma-overview" id="jma-overview-text"></div>
@@ -517,9 +517,9 @@ lang: ja
 
         <div class="weather-box" id="weather-current-box">
             <h2>🌡️ 現在の天気<small>（参考）</small> <span style="font-size:11px; font-weight:400; color:#707070; letter-spacing:-0.28px;">（Open-Meteo）</span></h2>
-            <div class="data-row"><span>気温:</span> <span id="temp">-- ℃</span></div>
-            <div class="data-row"><span>風速:</span> <span id="wind">-- m/s</span></div>
-            <div class="data-row"><span>風向:</span> <span id="wind-dir">-- °</span></div>
+            <div class="data-row"><span>気 温 :</span> <span id="temp">--℃</span></div>
+            <div class="data-row"><span>風 速 :</span> <span id="wind">-- m/s</span></div>
+            <div class="data-row"><span>風 向 :</span> <span id="wind-dir">-- °</span></div>
             <p class="note">※周辺の気象モデルに基づく推計値のため、実測値とは異なる場合があります。</p>
         </div>
     </div>
@@ -565,7 +565,7 @@ lang: ja
             hour: '2-digit', minute: '2-digit'
         };
         const el = document.getElementById('current-time');
-        el.innerHTML = `更新日時　${now.toLocaleString('ja-JP', options)} 🔄`;
+        el.innerHTML = `更新日時 : ${now.toLocaleString('ja-JP', options)} 🔄`;
         el.onclick = () => fetchWeatherData();
     }
 
@@ -791,7 +791,8 @@ lang: ja
             if (item.height !== undefined && item.height !== null) {
                 hasHeightData = true;
                 heightValue = parseFloat(item.height);
-                heightText = ` <span style="font-weight: normal; font-size: 0.85em; opacity: 0.8;">(${heightValue.toFixed(1)}m)</span>`;
+                // カッコをグレーにし、太字を解除
+                heightText = ` <span style="color: #888888; font-weight: normal; font-size: 0.85em;">(${heightValue.toFixed(1)}m)</span>`;
             }
 
             const formattedTime = `${timeStr}${heightText}`;
@@ -810,18 +811,21 @@ lang: ja
             });
         });
 
+        // 複数データがある場合のカンマの装飾（グレーにし、太字を解除）
+        const separator = '<span style="color: #888888; font-weight: normal;"> , </span>';
+
         // 満潮・干潮の文字列をまとめて表示
         if (highTides.length > 0) {
             const row = document.createElement('div');
             row.className = 'data-row';
-            row.innerHTML = `<span>満潮:</span> <span style="color: #0275d8; font-weight: bold;">${highTides.join(', ')}</span>`;
+            row.innerHTML = `<span>満潮:</span> <span style="color: #0275d8; font-weight: bold;">${highTides.join(separator)}</span>`;
             container.appendChild(row);
         }
 
         if (lowTides.length > 0) {
             const row = document.createElement('div');
             row.className = 'data-row';
-            row.innerHTML = `<span>干潮:</span> <span style="color: #d9534f; font-weight: bold;">${lowTides.join(', ')}</span>`;
+            row.innerHTML = `<span>干潮:</span> <span style="color: #d9534f; font-weight: bold;">${lowTides.join(separator)}</span>`;
             container.appendChild(row);
         }
 
@@ -831,6 +835,11 @@ lang: ja
 
     // Chart.jsを用いてタイドグラフを描画する関数
     function drawTideChart(extremes, hasHeightData) {
+        // Chart.jsのデフォルトフォントを設定
+        if (window.Chart) {
+            Chart.defaults.font.family = 'Inter, "Zen Kaku Gothic New", sans-serif';
+        }
+
         const chartContainer = document.getElementById('tide-chart-container');
         chartContainer.style.display = 'block';
 
