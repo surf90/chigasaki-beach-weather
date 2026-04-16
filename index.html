@@ -249,7 +249,7 @@ lang: ja
         .warning-detail-link {
             display: block;
             font-size: 12px;
-            color: #0275fd;
+            color: #707070;
             text-align: right;
             margin-top: 8px;
             letter-spacing: -0.28px;
@@ -262,11 +262,14 @@ lang: ja
             line-height: 1.6;
         }
         p.note a {
-            color: #0275fd;
+            color: #707070;
             text-decoration: none;
         }
         p.note a:hover {
             text-decoration: underline;
+        }
+        p.note strong a {
+            color: #0e7490; /* 気象庁HP：注意喚起のため深ティール */
         }
         
         /* フッター全体の基本設定 */
@@ -282,7 +285,7 @@ lang: ja
             gap: 24px; 
         }
         .footer a {
-            color: #0275fd; /* STUDIO Blue */
+            color: #707070;
             text-decoration: none;
             transition: opacity 0.2s;
         }
@@ -303,6 +306,24 @@ lang: ja
             font-size: 12px;
             letter-spacing: -0.28px;
             margin-top: 8px;
+        }
+        /* コピーライトリンクを目立たなくする */
+        .silent-link {
+            color: inherit;
+            text-decoration: none;
+            opacity: 0.5;
+            cursor: default;
+        }
+        .silent-link:hover {
+            opacity: 1;
+        }
+        /* ライフセービングリンク */
+        .lifesaving-link {
+            color: #c0392b !important;
+            opacity: 0.75;
+        }
+        .lifesaving-link:hover {
+            opacity: 1;
         }
     #weather-content {
         transition: opacity 0.3s ease;
@@ -390,11 +411,11 @@ lang: ja
         </div>
         
         <div class="footer-info">
-            | 茅ヶ崎でのライフセービング活動の情報は<a href="https://www.instagram.com/surf90chigasakilsc/" target="_blank" rel="noopener noreferrer">こちら</a> |
+            | 茅ヶ崎でのライフセービング活動の情報は<a class="lifesaving-link" href="https://www.instagram.com/surf90chigasakilsc/" target="_blank" rel="noopener noreferrer">こちら</a> |
         </div>
         
         <div class="footer-copyright">
-            <a href="https://github.com/surf90/chigasaki-BOT/blob/main/README.md" target="_blank">&copy; </a>2026 ISHIKAWA, Natsuki | MIT License
+            <a class="silent-link" href="https://github.com/surf90/chigasaki-BOT/blob/main/README.md" target="_blank">&copy; </a>2026 ISHIKAWA, Natsuki | MIT License
         </div>
     </div>
 </div>
