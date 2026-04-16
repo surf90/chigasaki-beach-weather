@@ -74,14 +74,14 @@ lang: ja
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
         }
         body {
-            /* 変更: 英数字はInter、日本語をZen Kaku Gothic Newに */
-            font-family: Inter, "Zen Kaku Gothic New", sans-serif;
+            font-family: Inter, "Noto Sans JP", sans-serif;
             background: linear-gradient(160deg, #FFFBEB 0%, #EFF6FF 100%);
             min-height: 100vh;
             color: #222222;
@@ -102,51 +102,15 @@ lang: ja
             border-radius: 16px;
             box-shadow: 0 4px 24px rgba(0,86,120,0.10);
         }
-        /* 変更・追加: h1周りのスタイル */
         h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: #0e4f6e;
             text-align: center;
             margin-top: 0;
             margin-bottom: 24px;
             line-height: 1.25;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
-        
-        /* タイトルロゴ用の特別な装飾 */
-        .logo-text {
-            font-family: "Zen Kaku Gothic New", sans-serif;
-            font-weight: 900; /* 一番太くして力強く */
-            font-size: 2.1rem; /* 少し大きく */
-            letter-spacing: 0.05em; /* 文字間を少し空ける */
-            /* 海っぽいグラデーション（単色が良い場合は下の3行を消して color: #0e4f6e; にしてください） */
-            background: linear-gradient(135deg, #0e7490 0%, #0284c7 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        h1 small {
-            font-size: 14px;
-            font-weight: 500;
-            color: #707070;
-            display: inline-block;
-            transform: translateY(2px); /* 少し下げるてバランス調整 */
-        }
-        
-        .title-divider {
-            color: #cbd5e1;
-            font-weight: 300;
-            font-size: 1.2rem;
-        }
-        /* カッコ内の情報を少し細く、色も少し控えめにする設定 */
-        .sub-info {
-            font-weight: 400; /* 1段階細く設定（メインが500〜700の場合） */
-            font-size: 0.9em;  /* 少し小さくするとよりバランスが良くなります */
-            opacity: 0.85;    /* わずかに透過させることで視覚的な強弱がつきます */
-            margin-left: 2px;
-        }
-        
         /* ヒーローカード */
         .hero-cards {
             display: grid;
@@ -429,25 +393,12 @@ lang: ja
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 </head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L922RQ9G6R"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-L922RQ9G6R');
-    </script>
 <body>
 
 <div class="container">
-    <h1><span class="logo-text">ちがログ</span> <span class="title-divider">|</span> <small>茅ヶ崎の海情報</small></h1>
+    <h1>ちがログ | <small>茅ヶ崎の海情報</small></h1>
     <span class="subtitle">茅ヶ崎の海を、５秒でログする。</span>
     
-    <div style="overflow: hidden; margin-bottom: 4px;">
-        <div id="current-time" class="current-time"></div>
-    </div>
-
     <div id="skeleton-loading">
         <div class="hero-cards" style="margin-bottom:20px;">
             <div style="background:#e2e8f0;border-radius:12px;height:72px;" class="skeleton"></div>
@@ -463,7 +414,6 @@ lang: ja
     <div id="error" class="error" style="display: none;">データの取得に失敗しました。</div>
 
     <div id="weather-content" style="display: none;">
-        <!-- ヒーローカード -->
         <div class="hero-cards">
             <div class="hero-card" onclick="document.getElementById('marine-box').scrollIntoView({behavior:'smooth',block:'start'})" style="cursor:pointer;">
                 <span class="hero-card-label">🌊 波の高さ</span>
@@ -535,6 +485,10 @@ lang: ja
         </div>
     </div>
     
+    <div style="overflow: hidden; margin-bottom: 4px;">
+        <div id="current-time" class="current-time"></div>
+    </div>
+
     <div class="footer">
         <div class="footer-data">
             データ提供元:
@@ -676,8 +630,7 @@ lang: ja
 
 
         const ageLabel = ageSource === "NASA" ? `月齢: ${age.toFixed(1)}` : `月齢: ${age.toFixed(1)} / 計算値`;
-        // textContent ではなく innerHTML を使い、class="sub-info" で囲む
-        document.getElementById('tide-type').innerHTML = `${tideType} <span class="sub-info">(${ageLabel})</span>`;
+        document.getElementById('tide-type').textContent = `${tideType} (${ageLabel})`;
     }
 
     // プレビュー用のダミー潮汐データを生成する関数
@@ -785,14 +738,14 @@ lang: ja
         const chartDataPoints = [];
         let hasHeightData = false;
 
+        const highTides = [];
+        const lowTides = [];
+
         extremes.forEach(item => {
             // Stormglassの時間はUTCなので、日本時間に変換
             const dateObj = new Date(item.time);
             const timeStr = dateObj.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
             
-            const typeStr = item.type === 'high' ? '満潮' : '干潮';
-            const color = item.type === 'high' ? '#0275d8' : '#d9534f'; // 満潮は青系、干潮は赤系
-
             // 高さデータがあれば取得
             let heightValue = item.type === 'high' ? 1 : 0;
             let heightText = '';
@@ -802,11 +755,12 @@ lang: ja
                 heightText = ` (${heightValue.toFixed(1)}m)`;
             }
 
-            const row = document.createElement('div');
-            row.className = 'data-row';
-            // heightText（高さの情報）を class="sub-info" で囲む
-            row.innerHTML = `<span>${typeStr}:</span> <span style="color: ${color}; font-weight: bold;">${timeStr}<span class="sub-info">${heightText}</span></span>`;
-            container.appendChild(row);
+            const formattedTime = `${timeStr}${heightText}`;
+            if (item.type === 'high') {
+                highTides.push(formattedTime);
+            } else {
+                lowTides.push(formattedTime);
+            }
 
             // グラフ用にデータを格納
             chartDataPoints.push({
@@ -816,6 +770,21 @@ lang: ja
                 height: heightValue
             });
         });
+
+        // 満潮・干潮の文字列をまとめて表示
+        if (highTides.length > 0) {
+            const row = document.createElement('div');
+            row.className = 'data-row';
+            row.innerHTML = `<span>満潮:</span> <span style="color: #0275d8; font-weight: bold;">${highTides.join(', ')}</span>`;
+            container.appendChild(row);
+        }
+
+        if (lowTides.length > 0) {
+            const row = document.createElement('div');
+            row.className = 'data-row';
+            row.innerHTML = `<span>干潮:</span> <span style="color: #d9534f; font-weight: bold;">${lowTides.join(', ')}</span>`;
+            container.appendChild(row);
+        }
 
         // グラフを描画
         drawTideChart(chartDataPoints, hasHeightData);
