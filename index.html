@@ -455,7 +455,7 @@ lang: ja
                 <canvas id="tideChart"></canvas>
             </div>
 
-            <p class="note">※正確な潮位は<a href="https://www.data.jma.go.jp/kaiyou/db/tide/suisan/index.php" target="_blank">気象庁の潮位表（江の島）</a>等をご確認ください。</p>
+            <p class="note">※正確な潮位は<a href="https://www.data.jma.go.jp/kaiyou/db/tide/suisan/index.php" target="_blank">気象庁の潮位表</a>等をご確認ください。</p>
         </div>
 
         <div class="weather-box" id="marine-box">
@@ -538,7 +538,7 @@ lang: ja
             hour: '2-digit', minute: '2-digit'
         };
         const el = document.getElementById('current-time');
-        el.innerHTML = `更新日時　${now.toLocaleString('ja-JP', options)} 🔄 タップして更新`;
+        el.innerHTML = `更新日時　${now.toLocaleString('ja-JP', options)} 🔄`;
         el.onclick = () => fetchWeatherData();
     }
 
