@@ -39,4 +39,8 @@ try:
 
 except urllib.error.URLError as e:
     print(f"Error fetching data: {e}")
+    # HTTPステータスコードが取得できる場合は詳細を出力（402ならAPI制限の可能性など）
+    if hasattr(e, 'code'):
+        print(f"HTTP Error Code: {e.code}")
+        print(f"Response: {e.read().decode()}")
     exit(1)
