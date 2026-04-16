@@ -935,41 +935,49 @@ lang: ja
                     },
                     x: {
                         ticks: {
-                            autoSkip: false, // ★自動間引きをオフにする
+                            autoSkip: false, // 自動間引きをオフ
                             maxRotation: 0,
                             callback: function(value, index) {
                                 const label = this.getLabelForValue(value);
+                                if (!label) return null;
                                 
-                                // 1. 最初のラベル（一番初めの満潮/干潮）は必ず表示
+                                // 1. 最初のラベル（一番初めの満潮/干潮）はそのまま表示
                                 if (index === 0) return label;
 
-                                // 2. "XX:00" の形式（正時）のみを抽出
-                                const match = label.match(/^(\d{2}):00$/);
-                                if (match) {
-                                    const hour = parseInt(match[1], 10);
+                                const parts = label.split(':');
+                                if (parts.length < 2) return null;
+                                const hour = parseInt(parts[0], 10);
+                                
+                                // 2. 4の倍数の時間（0, 4, 8, 12, 16, 20）を狙う
+                                if (hour % 4 === 0) {
+                                    // 1つ前のデータ点の「時」を調べる
+                                    const prevLabel = this.getLabelForValue(value - 1);
+                                    if (!prevLabel) return null;
+                                    const prevHour = parseInt(prevLabel.split(':')[0], 10);
                                     
-                                    // 3. 4時間の倍数（00, 04, 08, 12, 16, 20）かチェック
-                                    if (hour % 4 === 0) {
-                                        // 4. 最初の時刻と近すぎる正時（例: 03:55の次の04:00など）は省く
+                                    // 3. 「XX時」に入った最初のデータ点だけを拾う（例: 07:55 の次の 08:25 など）
+                                    if (hour !== prevHour) {
                                         const firstLabel = this.getLabelForValue(0);
                                         const firstHour = parseInt(firstLabel.split(':')[0], 10);
                                         
-                                        // 最初の時間と2時間以内の差なら表示しない
-                                        if (Math.abs(hour - firstHour) < 2) {
+                                        // 4. 最初の時刻と近すぎる（2時間以内）場合は省く（23時と0時などの日またぎも考慮）
+                                        let diff = Math.abs(hour - firstHour);
+                                        if (diff > 12) diff = 24 - diff;
+                                        
+                                        if (diff < 2) {
                                             return null;
                                         }
                                         
-                                        // 条件をクリアしたキリの良い時刻を表示
-                                        return label;
+                                        // 5. 目盛り上はキリの良い「XX:00」に書き換えて表示する
+                                        return ('0' + hour).slice(-2) + ':00';
                                     }
                                 }
                                 
-                                // それ以外のラベルは非表示
-                                return null;
+                                return null; // 条件に合わないラベルは非表示
                             }
                         },
                         grid: { display: false }
-                    }
+                    } 
                 }
             }
         });
