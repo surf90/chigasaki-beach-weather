@@ -161,7 +161,29 @@ lang: ja
             font-weight: 500;
             letter-spacing: -0.28px;
             font-family: "IBM Plex Mono", monospace;
+            cursor: pointer;
+            transition: opacity 0.2s;
         }
+        .current-time:hover { opacity: 0.6; }
+        .current-time:active { opacity: 0.4; }
+        #toast {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            font-size: 13px;
+            padding: 10px 20px;
+            border-radius: 24px;
+            cursor: pointer;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.4s;
+            white-space: nowrap;
+        }
+        #toast.show { opacity: 1; }
         .jma-overview {
             font-size: 14px;
             color: #707070;
@@ -378,10 +400,12 @@ lang: ja
     function displayFetchTime() {
         const now = new Date();
         const options = { 
-            year: 'numeric', month: 'short', day: 'numeric', weekday: 'short', 
-            hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            year: 'numeric', month: 'short', day: 'numeric', weekday: 'short',
+            hour: '2-digit', minute: '2-digit'
         };
-        document.getElementById('current-time').textContent = "データ取得日時: " + now.toLocaleString('ja-JP', options);
+        const el = document.getElementById('current-time');
+        el.innerHTML = `データ取得日時: ${now.toLocaleString('ja-JP', options)} 🔄`;
+        el.onclick = () => fetchWeatherData();
     }
 
     // 天気と風のデータを取得 (Open-Meteo API)
@@ -926,6 +950,7 @@ lang: ja
             document.getElementById('weather-content').style.display = 'block';
 
             // 取得完了時の時刻を表示
+            _lastFetchTime = Date.now();
             displayFetchTime();
 
         } catch (error) {
@@ -935,9 +960,41 @@ lang: ja
         }
     }
 
-    // ページ読み込み時に実行
-    window.onload = fetchWeatherData;
+    // トースト管理
+    let _toastShown = false;
+    let _lastFetchTime = Date.now();
+
+    function showToast() {
+        if (_toastShown) return;
+        _toastShown = true;
+        const t = document.getElementById('toast');
+        t.style.display = 'block';
+        setTimeout(() => t.classList.add('show'), 10);
+        setTimeout(() => hideToast(), 8000);
+    }
+
+    function hideToast() {
+        const t = document.getElementById('toast');
+        t.classList.remove('show');
+        setTimeout(() => { t.style.display = 'none'; _toastShown = false; }, 400);
+    }
+
+    // ユーザー操作検知: 3時間経過していればトースト表示
+    function _onUserInteraction() {
+        if (Date.now() - _lastFetchTime >= 3 * 60 * 60 * 1000) {
+            showToast();
+        }
+    }
+    ['click', 'touchstart'].forEach(ev => document.addEventListener(ev, _onUserInteraction));
+
+    // ページ読み込み時に実行、3時間ごとに自動再取得
+    window.onload = () => {
+        fetchWeatherData();
+        setInterval(fetchWeatherData, 3 * 60 * 60 * 1000);
+    };
 </script>
+
+<div id="toast" onclick="fetchWeatherData(); hideToast();">🔄 データを更新する</div>
 
 </body>
 </html>
