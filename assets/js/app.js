@@ -553,7 +553,7 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
                     title: { display: false },
                     ticks: { 
                         // 【追加】ラベルとY軸の隙間を最小限（2px）にする
-                        padding: 2,
+                        padding: 0,
                         maxTicksLimit: 4, 
                         callback: v => v.toFixed(1) 
                     },
