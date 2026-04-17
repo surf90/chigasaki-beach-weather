@@ -482,8 +482,6 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
     const jstOffsetMs    = 9 * 60 * 60 * 1000;
     const todayJstStartMs = Math.floor((Date.now() + jstOffsetMs) / 86400000) * 86400000 - jstOffsetMs;
     const xMin = todayJstStartMs +  4 * 60 * 60 * 1000;
-    
-    // 【修正2】X軸の終端を24時間後から20:00地点に変更
     const xMax = todayJstStartMs + 20 * 60 * 60 * 1000; 
     const h4ms = 4 * 60 * 60 * 1000;
 
@@ -513,13 +511,18 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
         options: {
             responsive: true, 
             maintainAspectRatio: false,
-            // 【修正1】レイアウトの左右の余白を最小化して横幅を最大化
-            layout: {
-                padding: { left: 0, right: 0 } 
-            },
             interaction: { mode: 'index', intersect: false },
             plugins: {
-                legend: { display: false },
+                // 【追加】凡例をグラフ内に表示
+                legend: { 
+                    display: true,
+                    position: 'top',
+                    align: 'end', // 右上に配置
+                    labels: {
+                        boxWidth: 12,
+                        usePointStyle: true // 丸いアイコンで表示
+                    }
+                },
                 tooltip: {
                     callbacks: {
                         title(items) {
@@ -527,7 +530,6 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
                             const ms = items[0].parsed.x;
                             const h  = (new Date(ms).getUTCHours() + 9) % 24;
                             const m  = new Date(ms).getUTCMinutes();
-                            // ツールチップ内の表示は分かりやすさのため元のゼロ埋めフォーマットを維持しています
                             return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
                         },
                         label(ctx) {
@@ -546,7 +548,6 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
                         callback(value) {
                             const h = (new Date(value).getUTCHours() + 9) % 24;
                             if (h === 0 || h === 24) return null;
-                            // 【修正3】X軸ラベルのゼロ埋めを解除 (例: 04:00 -> 4:00)
                             return h + ':00';
                         }
                     },
@@ -554,13 +555,10 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
                 },
                 yWave: {
                     type: 'linear', position: 'left',
-                    title: { display: true, text: '最大波高 [m]', font: { size: 11 }, color: '#0275d8' },
+                    // 【変更】Y軸タイトルを非表示
+                    title: { display: false },
                     ticks: { 
-                        // 【修正1】ラベルを内側に配置
-                        mirror: true, 
-                        // ラベルが波の背景色に埋もれないようZインデックスを上げる
-                        z: 10,
-                        // 【修正4】目盛りの表示数を削減（最大4つ程度）
+                        // 【変更】mirror: true を削除して外側配置に戻す
                         maxTicksLimit: 4, 
                         callback: v => v.toFixed(1) 
                     },
@@ -568,12 +566,10 @@ function drawWaveCombinedChart(canvasId, existingInstance, data) {
                 },
                 yPeriod: {
                     type: 'linear', position: 'right',
-                    title: { display: true, text: '周期 [秒]', font: { size: 11 }, color: '#27ae60' },
+                    // 【変更】Y軸タイトルを非表示
+                    title: { display: false },
                     ticks: { 
-                        // 【修正1】ラベルを内側に配置
-                        mirror: true, 
-                        z: 10,
-                        // 【修正4】目盛りの表示数を削減（最大4つ程度）
+                        // 【変更】mirror: true を削除して外側配置に戻す
                         maxTicksLimit: 4,
                         stepSize: 1, 
                         callback: v => Number.isInteger(v) ? v : null 
