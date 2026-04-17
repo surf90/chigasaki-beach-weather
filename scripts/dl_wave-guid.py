@@ -1,36 +1,66 @@
-import urllib.request
 import csv
-import json
 import io
+import json
+import os
+import urllib.request
+from datetime import datetime, timezone, timedelta
 
-# 取得したい海域のCSV URL
-url = "https://www.data.jma.go.jp/waveinf/data/Guid/csv/wave_guid_19.csv"
+JST = timezone(timedelta(hours=9))
+# 注: 気象庁サイト側の不具合により wave_guid.html?area=19 がエリア20（関東地方南部）のデータを配信している。
+# 正しいエリアコードは20のため、CSVは wave_guid_20.csv を使用する。
+URL = "https://www.data.jma.go.jp/waveinf/data/Guid/csv/wave_guid_20.csv"
 
-# 1. データをダウンロード
-response = urllib.request.urlopen(url)
-raw_data = response.read()
 
-# 文字化け対策（気象庁の海洋系データはShift-JISのケースがあるため念のためフォールバック）
-try:
-    csv_text = raw_data.decode('utf-8')
-except UnicodeDecodeError:
-    csv_text = raw_data.decode('shift_jis')
+def fetch_csv(url: str) -> str:
+    """CSVデータをURLから取得してデコードする。"""
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (ChigaLog/1.0)"})
+    with urllib.request.urlopen(req) as resp:
+        raw = resp.read()
+    try:
+        return raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw.decode("shift_jis")
 
-# 2. CSVを辞書型のリスト（JSONと同じ構造）に変換
-reader = csv.DictReader(io.StringIO(csv_text))
-data_list = [row for row in reader]
 
-# 3. JSON文字列に変換
-json_output = json.dumps(data_list, ensure_ascii=False, indent=2)
+def parse_csv(csv_text: str) -> list[dict]:
+    """CSVを解析して時刻・周期・波高のリストを返す。"""
+    reader = csv.reader(io.StringIO(csv_text))
+    next(reader)  # ヘッダー行をスキップ
+    result = []
+    for row in reader:
+        if len(row) < 7:
+            continue
+        _, year, month, day, hour, period, wave_height = row[:7]
+        try:
+            dt = datetime(int(year), int(month), int(day), int(hour), tzinfo=JST)
+            result.append({
+                "time": dt.isoformat(),
+                "period": float(period),
+                "wave_height": float(wave_height),
+            })
+        except (ValueError, IndexError):
+            continue
+    return result
 
-# 結果の確認（長くなるため最初の500文字だけ表示）
-print("--- 変換されたJSONデータ ---")
-print(json_output[:500])
 
-# ==========================================
-# （オプション）JSONファイルとしてローカルに保存する場合
-# ==========================================
-save_file = 'wave_guid_19.json'
-with open(save_file, 'w', encoding='utf-8') as f:
-    json.dump(data_list, f, ensure_ascii=False, indent=2)
-print(f"\n{save_file} としてJSON形式で保存しました。")
+def main() -> None:
+    """気象庁波浪ガイダンス（area=20）を取得してJSONに保存する。"""
+    print("気象庁 波浪ガイダンス（area=20）の取得を開始します...")
+    csv_text = fetch_csv(URL)
+    data = parse_csv(csv_text)
+    output = {
+        "updated_at": datetime.now(JST).isoformat(),
+        "area": 20,
+        "data": data,
+    }
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    data_dir = os.path.join(repo_root, "data")
+    os.makedirs(data_dir, exist_ok=True)
+    output_path = os.path.join(data_dir, "wave_guid_20.json")
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(output, f, ensure_ascii=False, indent=2)
+    print(f"保存完了: {output_path}（{len(data)}件）")
+
+
+if __name__ == "__main__":
+    main()

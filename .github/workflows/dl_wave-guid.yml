@@ -1,0 +1,28 @@
+name: Fetch JMA Wave Guidance
+
+on:
+  schedule:
+    # JST 9:00, 17:00, 翌1:00 -> UTC 0:00, 8:00, 16:00
+    - cron: '0 0,8,16 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-wave-guid:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run fetch script
+        run: python scripts/dl_wave-guid.py
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add data/wave_guid_20.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update wave guidance data" && git push)

@@ -485,6 +485,23 @@ lang: ja
             <p class="note">※正確な潮位は<a href="https://www.data.jma.go.jp/kaiyou/db/tide/suisan/index.php" target="_blank">気象庁の潮位表</a>等をご確認ください。</p>
         </div>
 
+        <div class="weather-box" id="wave-guid-box">
+            <h2>🌊 波情報 <span style="font-size:11px; font-weight:400; color:#707070; letter-spacing:-0.28px;">（気象庁）</span></h2>
+            <div id="wave-guid-loading" style="color:#707070; font-size:14px;">取得中...</div>
+            <div id="wave-guid-content" style="display:none;">
+                <div style="font-size:12px; color:#707070; margin-bottom:4px;">最大波高</div>
+                <div id="wave-height-chart-container" style="height:160px; margin-bottom:16px;">
+                    <canvas id="waveHeightChart"></canvas>
+                </div>
+                <div style="font-size:12px; color:#707070; margin-bottom:4px;">周期</div>
+                <div id="wave-period-chart-container" style="height:120px;">
+                    <canvas id="wavePeriodChart"></canvas>
+                </div>
+                <p class="note">※有義波高と卓越周期の予測値（気象庁 波浪ガイダンス 海域19）。</p>
+            </div>
+            <div id="wave-guid-error" style="display:none; color:#c0392b; font-size:14px;">波情報の取得に失敗しました。</div>
+        </div>
+
         <div class="weather-box" id="marine-box">
             <h2>🌊 海面状況 <small>(予測)</small> <span style="font-size:11px; font-weight:400; color:#707070; letter-spacing:-0.28px;">（Open-Meteo）</span></h2>
             <div class="data-row"><span>波の高さ: </span> <span id="wave-height">-- m</span></div>
@@ -1131,6 +1148,115 @@ lang: ja
         }
     }
 
+    let waveHeightChartInstance = null;
+    let wavePeriodChartInstance = null;
+
+    async function fetchWaveGuidance() {
+        try {
+            const hour3Buster = Math.floor(Date.now() / (3 * 60 * 60 * 1000));
+            const resp = await fetch(`data/wave_guid_20.json?t=${hour3Buster}`);
+            if (!resp.ok) throw new Error('wave_guid_20.json の読み込みに失敗');
+            const json = await resp.json();
+
+            // 今日（JST）のデータに絞る
+            const now = new Date();
+            const todayJst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+            const todayStr = `${todayJst.getFullYear()}-${String(todayJst.getMonth()+1).padStart(2,'0')}-${String(todayJst.getDate()).padStart(2,'0')}`;
+
+            const todayData = (json.data || []).filter(d => d.time.startsWith(todayStr));
+            if (todayData.length === 0) throw new Error('本日の波浪データがありません');
+
+            waveHeightChartInstance = drawWaveChart('waveHeightChart', waveHeightChartInstance, todayData, 'wave_height', '#0275d8', '最大波高 (m)', 'm');
+            wavePeriodChartInstance = drawWaveChart('wavePeriodChart', wavePeriodChartInstance, todayData, 'period', '#27ae60', '周期 (s)', 's');
+
+            document.getElementById('wave-guid-loading').style.display = 'none';
+            document.getElementById('wave-guid-content').style.display = 'block';
+        } catch (e) {
+            console.error('Wave guidance error:', e);
+            document.getElementById('wave-guid-loading').style.display = 'none';
+            document.getElementById('wave-guid-error').style.display = 'block';
+        }
+    }
+
+    function drawWaveChart(canvasId, existingInstance, data, key, color, label, unit) {
+        if (window.Chart) {
+            Chart.defaults.font.family = 'Inter, "Zen Kaku Gothic New", sans-serif';
+        }
+        const labels = data.map(d => {
+            const dt = new Date(d.time);
+            return dt.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+        });
+        const values = data.map(d => d[key]);
+
+        if (existingInstance) existingInstance.destroy();
+
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label,
+                    data: values,
+                    borderColor: color,
+                    backgroundColor: color + '26',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: color,
+                    pointBorderColor: '#fff',
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ctx.parsed.y.toFixed(1) + ' ' + unit
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: { callback: v => v.toFixed(1) + ' ' + unit },
+                        suggestedMin: Math.min(...values) - 0.5,
+                        suggestedMax: Math.max(...values) + 0.5
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 0,
+                            callback: function(value, index) {
+                                const lbl = this.getLabelForValue(value);
+                                if (!lbl) return null;
+                                if (index === 0) return lbl;
+                                const hour = parseInt(lbl.split(':')[0], 10);
+                                if (hour % 4 === 0) {
+                                    const prevLbl = this.getLabelForValue(value - 1);
+                                    if (!prevLbl) return null;
+                                    if (parseInt(prevLbl.split(':')[0], 10) !== hour) {
+                                        const firstHour = parseInt(this.getLabelForValue(0).split(':')[0], 10);
+                                        let diff = Math.abs(hour - firstHour);
+                                        if (diff > 12) diff = 24 - diff;
+                                        if (diff < 2) return null;
+                                        return ('0' + hour).slice(-2) + ':00';
+                                    }
+                                }
+                                return null;
+                            }
+                        },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+        return chart;
+    }
+
     async function fetchWeatherData() {
         const timeEl = document.getElementById('current-time');
         if (timeEl.innerHTML !== '') {
@@ -1145,9 +1271,10 @@ lang: ja
             // 潮汐データ（満潮・干潮）の取得を実行
             fetchTideExtremes();
 
-            // 気象庁天気予報・注意報の取得
+            // 気象庁天気予報・注意報・波浪ガイダンスの取得
             fetchJmaForecast();
             fetchJmaWarning();
+            fetchWaveGuidance();
 
             // Open-Meteoは秒単位でキャッシュ回避して直接取得
             const secBuster = Math.floor(Date.now() / 1000);
