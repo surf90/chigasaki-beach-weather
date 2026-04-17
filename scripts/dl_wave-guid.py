@@ -44,13 +44,13 @@ def parse_csv(csv_text: str) -> list[dict]:
 
 
 def main() -> None:
-    """気象庁波浪ガイダンス（area=19）を取得してJSONに保存する。"""
-    print("気象庁 波浪ガイダンス（area=19）の取得を開始します...")
+    """気象庁波浪ガイダンス（area=20）を取得してJSONに保存する。"""
+    print("気象庁 波浪ガイダンス（area=20）の取得を開始します...")
     csv_text = fetch_csv(URL)
     data = parse_csv(csv_text)
     output = {
         "updated_at": datetime.now(JST).isoformat(),
-        "area": 19,
+        "area": 20,
         "data": data,
     }
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
