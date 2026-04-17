@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install minify tools
-        run: pip install csscompressor jsmin
+        run: pip install csscompressor
 
       - name: Minify CSS
         run: |
@@ -29,14 +29,7 @@ jobs:
           "
 
       - name: Minify JS
-        run: |
-          python -c "
-          import jsmin, pathlib
-          src = pathlib.Path('assets/js/app.js').read_text(encoding='utf-8')
-          out = jsmin.jsmin(src)
-          pathlib.Path('assets/js/app.min.js').write_text(out, encoding='utf-8')
-          print(f'JS: {len(src)} -> {len(out)} bytes')
-          "
+        run: npx --yes terser assets/js/app.js --compress --mangle --output assets/js/app.min.js
 
       - name: Commit minified files
         run: |
