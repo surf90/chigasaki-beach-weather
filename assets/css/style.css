@@ -12,6 +12,8 @@ body {
     line-height: 1.7;
     word-break: break-all;
     overflow-wrap: break-word;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
 }
 .container {
     max-width: 600px;
@@ -37,7 +39,7 @@ h1 {
 .logo-text {
     font-family: "Zen Kaku Gothic New", sans-serif;
     font-weight: 900;
-    font-size: 2.1rem;
+    font-size: 2.4rem;
     letter-spacing: 0.05em;
     background: linear-gradient(135deg, #0e7490 0%, #0284c7 100%);
     -webkit-background-clip: text;
@@ -70,6 +72,11 @@ h1 small {
     padding: 14px 8px 12px;
     text-align: center;
     color: #fff;
+    transition: transform .15s ease;
+    cursor: pointer;
+}
+.hero-card:active {
+    transform: scale(.98);
 }
 .hero-card-label {
     font-size: 12px;
@@ -85,7 +92,7 @@ h1 small {
     justify-content: center;
 }
 .hero-card-value {
-    font-size: 1.35rem;
+    font-size: 1.6rem;
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: -0.03em;
@@ -135,6 +142,15 @@ h1 small {
     background: #fff5f5;
     border: 2px solid #c0392b;
 }
+#typhoon-box {
+    border: 2px solid #e67e22;
+    background: #fffbf0;
+}
+.weather-box h2 small {
+    font-size: 11px;
+    font-weight: 400;
+    color: #707070;
+}
 .weather-box h2 {
     font-size: 1rem;
     font-weight: 600;
@@ -155,9 +171,14 @@ h1 small {
     font-size: 14px;
     font-weight: 500;
     letter-spacing: -0.28px;
+    white-space: nowrap;
+    word-break: keep-all;
+    flex-shrink: 0;
 }
 .data-row span:last-child {
     font-weight: 600;
+    min-width: 0;
+    text-align: right;
 }
 .loading {
     text-align: center;
@@ -191,11 +212,16 @@ h1 small {
     bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    background: #333;
-    color: #fff;
-    font-size: 13px;
-    padding: 10px 20px;
-    border-radius: 24px;
+    background: rgba(255,255,255,0.92);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: #0e7490;
+    font-size: 12px;
+    padding: 8px 16px;
+    border-radius: 500px;
+    border: 1px solid rgba(14,116,144,0.25);
+    box-shadow: 0 1px 6px rgba(0,86,120,0.08);
+    letter-spacing: -0.28px;
     cursor: pointer;
     z-index: 9999;
     opacity: 0;
