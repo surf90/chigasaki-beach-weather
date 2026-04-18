@@ -657,6 +657,7 @@ async function fetchWeatherData() {
         document.getElementById('wind').textContent     = `${weatherData.current_weather.windspeed} m/s`;
         document.getElementById('wind-dir').textContent = getWindDirection16(weatherData.current_weather.winddirection);
         document.getElementById('hero-temp').textContent = temp;
+        document.getElementById('hero-wind').textContent = weatherData.current_weather.windspeed;
 
         const cur = marineData.current;
         document.getElementById('wave-height').textContent =
